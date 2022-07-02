@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>若依项目部分漏洞代码分析 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">若依项目部分漏洞代码分析</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">June 20, 2022&nbsp;&nbsp;21:00:08</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近写了一个若依的项目，所以就正好对这个项目的安全问题也进行一下复盘学习</p>
+<h1 id="任意文件下载"><a href="#任意文件下载" class="headerlink" title="任意文件下载"></a>任意文件下载</h1><blockquote>
+<p>版本号小于4.5.1</p>
+</blockquote>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p>复现比较简单，使用resource参数添加<code>/profile</code>开头的相关路径即可</p>
+<img src="/2022/06/20/ruoyi/3.png" class="">
+
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 本地资源通用下载</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/common/download/resource&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">resourceDownload</span><span class="params">(String resource, HttpServletRequest request, HttpServletResponse response)</span></span><br><span class="line">        <span class="keyword">throws</span> Exception</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 本地资源路径</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">localPath</span> <span class="operator">=</span> Global.getProfile(); <span class="comment">// 获取文件上传的保存路径</span></span><br><span class="line">    <span class="comment">// 数据库资源地址</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">downloadPath</span> <span class="operator">=</span> localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX); <span class="comment">// 从/profile开始截取字符串，然后作为文件路径，漏洞就是这里触发</span></span><br><span class="line">    <span class="comment">// 下载名称</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">downloadName</span> <span class="operator">=</span> StringUtils.substringAfterLast(downloadPath, <span class="string">&quot;/&quot;</span>); <span class="comment">// 从最后一个“/”截取，获取文件名，如/aa/bb/cc/a.txt则文件名为a.txt</span></span><br><span class="line"></span><br><span class="line">    response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);</span><br><span class="line">    FileUtils.setAttachmentResponseHeader(response, downloadName);</span><br><span class="line"></span><br><span class="line">    FileUtils.writeBytes(downloadPath, response.getOutputStream());  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个漏洞比较简单，主要就是从resource参数获取的文件名从<code>/profile</code>进行截取，所以，只要在<code>profile</code>后面添加相对路径，然后截取后就可以利用相对路径下载</p>
+<h2 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h2><p>在修复方案中新增了<code>checkAllowDownload</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">checkAllowDownload</span><span class="params">(String resource)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 禁止目录上跳级别</span></span><br><span class="line">    <span class="keyword">if</span> (StringUtils.contains(resource, <span class="string">&quot;..&quot;</span>)) <span class="comment">//过滤..防止目录穿越</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查允许下载的文件规则</span></span><br><span class="line">    <span class="keyword">if</span> (ArrayUtils.contains(MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION, FileTypeUtils.getFileType(resource))) <span class="comment">//使用白名单来确定可下载的文件类型</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 不在允许下载的文件规则</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到使用白名单来防止任意文件下载，过滤<code>..</code>来防止目录穿越。</p>
+<h1 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h1><blockquote>
+<p>漏洞版本：版本号小于4.6.2</p>
+</blockquote>
+<h2 id="复现-1"><a href="#复现-1" class="headerlink" title="复现"></a>复现</h2><p>【系统管理-角色管理】查询功能处可以进行sql注入，payload如下，比较简单：</p>
+<img src="/2022/06/20/ruoyi/1.png" class="" title="img">
+
+<p>这个我用sqlmap没有跑出来，不知道是不是命令不正确，如果有知道的朋友麻烦告诉我。</p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SysRoleController.java</span></span><br><span class="line"><span class="meta">@RequiresPermissions(&quot;system:role:list&quot;)</span></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/list&quot;)</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="keyword">public</span> TableDataInfo <span class="title function_">list</span><span class="params">(SysRole role)</span></span><br><span class="line">    &#123;</span><br><span class="line">        startPage();</span><br><span class="line">        List&lt;SysRole&gt; list = roleService.selectRoleList(role);</span><br><span class="line">        <span class="keyword">return</span> getDataTable(list);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里传入了SysRole对象，看一下该对象的定义</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SysRole</span> <span class="keyword">extends</span> <span class="title class_">BaseEntity</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色ID */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;角色序号&quot;, cellType = ColumnType.NUMERIC)</span></span><br><span class="line">    <span class="keyword">private</span> Long roleId;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色名称 */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;角色名称&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String roleName;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色权限 */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;角色权限&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String roleKey;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色排序 */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;角色排序&quot;, cellType = ColumnType.NUMERIC)</span></span><br><span class="line">    <span class="keyword">private</span> String roleSort;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限） */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;数据范围&quot;, readConverterExp = &quot;1=所有数据权限,2=自定义数据权限,3=本部门数据权限,4=本部门及以下数据权限&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String dataScope;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 角色状态（0正常 1停用） */</span></span><br><span class="line">    <span class="meta">@Excel(name = &quot;角色状态&quot;, readConverterExp = &quot;0=正常,1=停用&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String status;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 删除标志（0代表存在 2代表删除） */</span></span><br><span class="line">    <span class="keyword">private</span> String delFlag;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户是否存在此角色标识 默认不存在 */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 菜单组 */</span></span><br><span class="line">    <span class="keyword">private</span> Long[] menuIds;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 部门组（数据权限） */</span></span><br><span class="line">    <span class="keyword">private</span> Long[] deptIds;</span><br></pre></td></tr></table></figure>
+
+<p>这里的dataScope参数存在注入漏洞，查看sql语句</p>
+<p>在ruoyi-system目录下的SysRoleMapper.xml文件中可以看到存在漏洞的代码</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectRoleList&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;SysRole&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;SysRoleResult&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">refid</span>=<span class="string">&quot;selectRoleContactVo&quot;</span>/&gt;</span></span><br><span class="line">    where r.del_flag = &#x27;0&#x27;</span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;roleName != null and roleName != &#x27;&#x27;&quot;</span>&gt;</span></span><br><span class="line">        AND r.role_name like concat(&#x27;%&#x27;, #&#123;roleName&#125;, &#x27;%&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;status != null and status != &#x27;&#x27;&quot;</span>&gt;</span></span><br><span class="line">        AND r.status = #&#123;status&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;roleKey != null and roleKey != &#x27;&#x27;&quot;</span>&gt;</span></span><br><span class="line">        AND r.role_key like concat(&#x27;%&#x27;, #&#123;roleKey&#125;, &#x27;%&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;dataScope != null and dataScope != &#x27;&#x27;&quot;</span>&gt;</span></span><br><span class="line">        AND r.data_scope = #&#123;dataScope&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;params.beginTime != null and params.beginTime != &#x27;&#x27;&quot;</span>&gt;</span><span class="comment">&lt;!-- 开始时间检索 --&gt;</span></span><br><span class="line">        and date_format(r.create_time,&#x27;%y%m%d&#x27;) <span class="symbol">&amp;gt;</span>= date_format(#&#123;params.beginTime&#125;,&#x27;%y%m%d&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;params.endTime != null and params.endTime != &#x27;&#x27;&quot;</span>&gt;</span><span class="comment">&lt;!-- 结束时间检索 --&gt;</span></span><br><span class="line">        and date_format(r.create_time,&#x27;%y%m%d&#x27;) <span class="symbol">&amp;lt;</span>= date_format(#&#123;params.endTime&#125;,&#x27;%y%m%d&#x27;)</span><br><span class="line">    <span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 数据范围过滤 --&gt;</span></span><br><span class="line">    $&#123;params.dataScope&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里<code>params.dataScope</code>进行了拼接，所以这个参数存在SQL注入。</p>
+<h2 id="修复方案-1"><a href="#修复方案-1" class="headerlink" title="修复方案"></a>修复方案</h2><p>查看github的文件diff</p>
+<img src="/2022/06/20/ruoyi/2.png" class="" title="img">
+
+<p>可以看到这里通过切片增加了一个clearDataScope函数，将用户输入的值进行了清空，从而防止了sql注入。在xml文件中还是使用了<code>$&#123;&#125;</code>来拼接参数，这个参数从设计者的角度来说应该不是由用户控制的，而是由handleDataScope()函数来确定范围，只是由于设计问题导致用户可以控制这个字段从而导致了SQL注入。有一说一的话，如果不是开源项目的话，这个漏洞应该很难被发现。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>渗透测试还是需要对代码审计有学习的，很多的深层逻辑漏洞往往需要代码审计才能最终发现。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2022/06/20/ruoyi/">http://example.com/2022/06/20/ruoyi/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/java/"># java</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2022/05/02/docker-cve/">Docker部分CVE复现与收集</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

